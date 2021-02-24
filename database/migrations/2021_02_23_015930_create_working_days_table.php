@@ -16,11 +16,12 @@ class CreateWorkingDaysTable extends Migration
         Schema::create('working_days', function (Blueprint $table) {
             $table->id();
 
-            $table->date('date');
+            $table->integer('month')->nullable();
+            $table->integer('year')->nullable();
             $table->integer('annual_days_off')->default(0);
             $table->integer('saturday_afternoon_day_off')->default(0);
             $table->integer('holiday')->default(0);
-            $table->integer('working_days')->default(0);
+            $table->double('working_days')->default(0);
 
             $table->timestamps();
         });

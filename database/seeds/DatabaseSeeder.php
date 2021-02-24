@@ -1,6 +1,9 @@
 <?php
 
+use DepartmentSeeder;
+use WorkingDaySeeder;
 use Illuminate\Database\Seeder;
+use App\Modules\WorkingDay\Models\WorkingDay;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +14,5 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
     }
 }

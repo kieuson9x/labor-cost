@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Modules\Employee\Models\Employee;
-use App\Modules\Employee\Models\EmployeeObserver;
+use App\Modules\Employee\Observers\EmployeeObserver;
 
 class AppServiceProvider extends ServiceProvider
 {

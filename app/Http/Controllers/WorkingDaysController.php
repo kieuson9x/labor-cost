@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Modules\Employee\Models\Employee;
 use App\Modules\Department\Models\Department;
+use App\Modules\WorkingDay\Models\WorkingDay;
 
-class EmployeeController extends Controller
+class WorkingDaysController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::all();
+        $year = $request->get('year') ?? Carbon::now()->year;
 
-        return view('employees.index', compact('employees'));
+        $workingDays = WorkingDay::where('year', $year)->orderBy('month')->get();
+
+        return view('working_days.index', compact('workingDays'));
     }
 
     /**
@@ -41,8 +45,8 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $requestData = $request->validate([
-            'full_name'         =>'required',
-            'department_id'     =>'required'
+            'full_name'         => 'required',
+            'department_id'     => 'required'
         ]);
 
         $employee = new Employee([

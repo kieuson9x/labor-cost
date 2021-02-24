@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Employee\Observer;
+namespace App\Modules\Employee\Observers;
 
 use App\Modules\Employee\Models\Employee;
 
@@ -16,10 +16,10 @@ class EmployeeObserver
     {
         $formattedCode = sprintf('KR%05d', $employee->id);
 
-        $employee->update([
-            'employee_code' => $formattedCode
-        ]);
+        if (empty($employee->employee_code)) {
+            $employee->update([
+                'employee_code' => $formattedCode
+            ]);
+        }
     }
-
-
 }
