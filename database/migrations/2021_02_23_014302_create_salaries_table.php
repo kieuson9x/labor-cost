@@ -18,7 +18,7 @@ class CreateSalariesTable extends Migration
 
             $table->integer('employee_id');
             $table->date('date')->nullable();
-            $table->float('amount');
+            $table->double('amount');
 
             $table->timestamps();
         });

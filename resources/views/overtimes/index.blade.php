@@ -3,10 +3,9 @@
 @section('main')
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="display-3">Employees</h1>
-        <a href="{{ route('employees.create')}}" class="btn btn-outline-primary mb-2">Tạo nhân viên mới</a>
-
-        <table class="table table-striped" id="table_employees">
+        <h1 class="display-3">Giờ làm thêm</h1>
+        <a href="{{ route('overtimes.create')}}" class="btn btn-outline-primary mb-2">Create</a>
+        <table class="table table-striped" id="table_employee_overtimes">
             <thead>
                 <tr>
                     <td>ID</td>
@@ -27,9 +26,6 @@
                     <td>{{$employee->salaries()->latest()->first()->amount ?? '-'}}</td>
                     <td>
                         <a href="{{ route('employees.edit',['id' => $employee->id])}}" class="btn btn-primary">Edit</a>
-                        <a href="{{ route('overtimes.create',['employeeId' => $employee->id])}}"
-                            class="btn btn-primary">Tăng
-                            ca</a>
                     </td>
                 </tr>
                 @endforeach
@@ -43,8 +39,8 @@
         <script src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
         <script>
             jQuery(document).ready(function() {
-                $('#table_employees').DataTable({
-                    responsive: true,
+                $('#table_employee_overtimes').DataTable({
+                    responsive: true
                 });
             });
         </script>

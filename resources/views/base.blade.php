@@ -14,6 +14,8 @@
   </nav>
   <div class="container-fluid">
     <div class="row">
+
+      {{-- Nav bar --}}
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky">
           <ul class="nav flex-column">
@@ -26,18 +28,26 @@
             <li class="nav-item">
               <a class="nav-link {{ (request()->routeIs('employees*')) ? 'active' : '' }}" href="/employees">
                 <i class="fas fa-users"></i>
-                Employees
+                Nhân viên
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link {{ (request()->routeIs('working_days*')) ? 'active' : '' }}" href="/working-days">
                 <i class="far fa-calendar-alt"></i>
-                Working Days
+                Lịch làm việc năm
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {{ (request()->routeIs('overtimes*')) ? 'active' : '' }}" href="/overtimes">
+                <i class="fas fa-stopwatch-20"></i>
+                Nhập số giờ làm thêm
               </a>
             </li>
           </ul>
         </div>
       </nav>
+
+      {{-- Main  --}}
       <main class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
         @yield('main')
       </main>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Modules\Employee\Models\Employee;
 use App\Modules\Department\Models\Department;
@@ -18,6 +19,20 @@ class EmployeeController extends Controller
         $employees = Employee::all();
 
         return view('employees.index', compact('employees'));
+    }
+
+    public function searchByName(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $employees = Employee::where('name', 'LIKE', "%$keyword%")->get()->map(function ($employee) {
+            return [
+                'id' => $employee->id,
+                'full_name' => $employee->full_name,
+                'department_name' => $employee->department->name ?? '',
+                'department_id' => $employee->department_id
+            ];
+        });
+        return response()->json($employees);
     }
 
     /**
@@ -41,8 +56,8 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $requestData = $request->validate([
-            'full_name'         =>'required',
-            'department_id'     =>'required'
+            'full_name'         => 'required',
+            'department_id'     => 'required'
         ]);
 
         $employee = new Employee([
@@ -93,6 +108,19 @@ class EmployeeController extends Controller
 
         $employee->full_name =  $request->get('full_name');
         $employee->department_id = $request->get('department_id');
+        $salary = $employee->salaries()->latest()->first();
+
+        if ($salary) {
+            $salary->update([
+                'amount' => $request->get('amount')
+            ]);
+        } else {
+            $employee->salaries()->create([
+                'amount' => $request->get('amount'),
+                'date' => Carbon::now()->startOfMonth()->toDateTimeString()
+            ]);
+        }
+
         $employee->save();
         $employee->refresh();
 

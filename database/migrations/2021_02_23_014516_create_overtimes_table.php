@@ -17,15 +17,16 @@ class CreateOvertimesTable extends Migration
             $table->id();
 
             $table->integer('employee_id');
-            $table->date('date');
+            $table->integer('month');
+            $table->integer('year');
 
-            $table->integer('weekdays')->default(0);
-            $table->integer('sunday')->default(0);
-            $table->integer('holiday')->default(0);
-            $table->integer('night')->default(0);
-            $table->integer('weekdays_night')->default(0);
-            $table->integer('sunday_night')->default(0);
-            $table->integer('holiday_night')->default(0);
+            $table->float('weekdays')->default(0);
+            $table->float('sunday')->default(0);
+            $table->float('holiday')->default(0);
+            $table->float('night')->default(0);
+            $table->float('weekdays_night')->default(0);
+            $table->float('sunday_night')->default(0);
+            $table->float('holiday_night')->default(0);
 
             $table->timestamps();
         });

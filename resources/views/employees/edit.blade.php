@@ -18,13 +18,13 @@
             @method('PUT')
             @csrf
             <div class="form-group">
-                <label for="first_name">Full Name</label>
+                <label for="first_name">Họ tên nhân viên</label>
                 <input type="text" class="form-control" name="full_name" length={255}
                     value="{{ $employee->full_name }}" />
             </div>
 
             <div class="form-group">
-                <label for="department_id">Department</label>
+                <label for="department_id">Bộ phận</label>
 
                 <select class="form-control" id="department_id" name="department_id">
                     @foreach($departmentOptions as $item)
@@ -35,7 +35,13 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Update</button>
+            <div class="form-group">
+                <label for="first_name">Lương</label>
+                <input type="text" class="form-control" name="amount" length={255}
+                    value="{{ $employee->salaries()->latest()->first()->amount ?? "" }}" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sửa</button>
         </form>
     </div>
 </div>
