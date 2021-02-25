@@ -27,9 +27,8 @@
                     <td>{{$employee->salaries()->latest()->first()->amount ?? '-'}}</td>
                     <td>
                         <a href="{{ route('employees.edit',['id' => $employee->id])}}" class="btn btn-primary">Edit</a>
-                        <a href="{{ route('overtimes.create',['employeeId' => $employee->id])}}"
-                            class="btn btn-primary">Tăng
-                            ca</a>
+                        <a href="{{ route('employees.overtimes.index',['employeeId' => $employee->id])}}"
+                            class="btn btn-primary">Bảng tăng ca</a>
                     </td>
                 </tr>
                 @endforeach

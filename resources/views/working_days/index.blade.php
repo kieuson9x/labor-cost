@@ -17,95 +17,110 @@
             <button type="submit" class="btn btn-primary">View</button>
         </form>
 
-        <table class="table table-striped" id="table_working_days">
+        <table class="table table-striped" data-toggle="table" id="table_working_days" data-editable="true">
             <thead>
                 <tr class="tableizer-firstrow">
                     <th>Nội dung</th>
-                    <th>Tháng 1</th>
-                    <th>Tháng 2</th>
-                    <th>Tháng 3</th>
-                    <th>Tháng 4</th>
-                    <th>Tháng 5</th>
-                    <th>Tháng 6</th>
-                    <th>Tháng 7</th>
-                    <th>Tháng 8</th>
-                    <th>Tháng 9</th>
-                    <th>Tháng 10</th>
-                    <th>Tháng 11</th>
-                    <th>Tháng 12</th>
+                    <th data-editable="true">Tháng 1</th>
+                    <th data-editable="true">Tháng 2</th>
+                    <th data-editable="true">Tháng 3</th>
+                    <th data-editable="true">Tháng 4</th>
+                    <th data-editable="true">Tháng 5</th>
+                    <th data-editable="true">Tháng 6</th>
+                    <th data-editable="true">Tháng 7</th>
+                    <th data-editable="true">Tháng 8</th>
+                    <th data-editable="true">Tháng 9</th>
+                    <th data-editable="true">Tháng 10</th>
+                    <th data-editable="true">Tháng 11</th>
+                    <th data-editable="true">Tháng 12</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>Lịch tháng</td>
-                    @foreach( $workingDays as $item)
-                    <td>{{ $item->daysInMonth }}</td>
-                    @endforeach
+                    @for ($i = 0; $i < 12; $i++) <td data-halign="center" data-editable={false}>
+                        {{ data_get($workingDays->where('month', $i + 1)->first(), 'daysInMonth', 0) }}
+                        </td>
+                        @endfor
                 </tr>
                 <tr>
                     <td>Ngày làm việc thực tế</td>
-                    @foreach( $workingDays as $item)
-                    <td>{{ $item->working_days }}</td>
-                    @endforeach
+                    @for ($i = 0; $i < 12; $i++) <td data-halign="center" data-editable="false" >
+                        {{ data_get($workingDays->where('month', $i + 1)->first(), 'working_days', 0) }}
+                        </td>
+                        @endfor
                 </tr>
                 <tr>
                     <td>Nghỉ hằng năm</td>
-                    @foreach( $workingDays as $item)
-                    <td>{{ $item->annual_days_off }}</td>
-                    @endforeach
+                    @for ($i = 0; $i < 12; $i++) <td data-halign="center">
+                        {{ data_get($workingDays->where('month', $i + 1)->first(), 'annual_days_off', 0) }}
+                        </td>
+                        @endfor
                 </tr>
                 <tr>
                     <td>nghỉ chiều thứ 7</td>
-                    @foreach( $workingDays as $item)
-                    <td>{{ $item->saturday_afternoon_day_off }}</td>
-                    @endforeach
+                    @for ($i = 0; $i < 12; $i++) <td data-halign="center">
+                        {{ data_get($workingDays->where('month', $i + 1)->first(), 'saturday_afternoon_day_off', 0) }}
+                        </td>
+                        @endfor
                 </tr>
                 <tr>
                     <td>nghỉ lễ tết</td>
-                    @foreach( $workingDays as $item)
-                    <td>{{ $item->holiday }}</td>
-                    @endforeach
+                    @for ($i = 0; $i < 12; $i++) <td data-halign="center">
+                        {{ data_get($workingDays->where('month', $i + 1)->first(), 'holiday', 0) }}
+                        </td>
+                        @endfor
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+
 @endsection
 
 @section('customScript')
 <script src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+
 <script>
-    jQuery(document).ready(function () {
-        const createdCell = function (cell) {
-            let original
+    $(function () {
+        var toast = new Toasty();
 
-            cell.setAttribute('contenteditable', true)
-            cell.setAttribute('spellcheck', false)
+        $('#table_working_days').bootstrapTable({
+            resizable: true,
+        });
 
-            cell.addEventListener('focus', function (e) {
-                original = e.target.textContent
-            })
+        $('#table_working_days').on('editable-save.bs.table', function (e, field, row, oldValue) {
+            var url = "{{route('working_days.update')}}";
 
-            cell.addEventListener('blur', function (e) {
-                if (original !== e.target.textContent) {
-                    const row = table.row(e.target.parentElement)
-                    row.invalidate()
-                    console.log('Row changed: ', row.data())
-                }
-            })
-        }
-
-        table = $('#table_working_days').DataTable({
-            responsive: true,
-            columnDefs: [{
-                targets: '_all',
-                createdCell: createdCell
-            }],
-            sort: false,
-            paging: false,
-            searching: false,
-        })
+            if (row["0"] === "Ngày làm việc thực tế" || row["0"] === "Lịch tháng") {
+                toast.error(` ${row["0"]} được tự động tính toán! Không cần sửa`);
+            } else {
+                $.ajax({
+                data: {
+                    'action': 'update',
+                    'month': field,
+                    'year': "{{$year}}",
+                    'type': row["0"],
+                    'value': row[field]
+                },
+                dataType: 'json',
+                type: "PUT",
+                url: url,
+                headers: {
+                    'X-CSRF-Token': '{{ csrf_token() }}',
+                },
+            }).done(function (response) {
+                // If successful
+                // show a successful message:
+                toast.success("You did something good!");
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                // If fail
+                toast.error(textStatus + ': ' + errorThrown);
+            });
+            }
+        });
     });
 
 </script>
+
 @endsection

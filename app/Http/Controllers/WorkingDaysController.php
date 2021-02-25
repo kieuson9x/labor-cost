@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Modules\Employee\Models\Overtime;
 use App\Modules\WorkingDay\Models\WorkingDay;
 
 class WorkingDaysController extends Controller
@@ -19,6 +21,22 @@ class WorkingDaysController extends Controller
 
         $workingDays = WorkingDay::where('year', $year)->orderBy('month')->get();
 
-        return view('working_days.index', compact('workingDays'));
+        return view('working_days.index', compact('workingDays', 'year'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        return $request->all();
+
+        $fieldName = Overtime::MAPPING_OVERTIME_TYPE[$request->input('type')];
+
+        return [];
     }
 }
