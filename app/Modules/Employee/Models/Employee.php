@@ -2,9 +2,12 @@
 
 namespace App\Modules\Employee\Models;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Employee\Models\Overtime;
 use App\Modules\Department\Models\Department;
+use App\Modules\WorkingDay\Models\WorkingDay;
 
 class Employee extends Model
 {
@@ -28,5 +31,38 @@ class Employee extends Model
     public static function getEmployeeCode($prefix, $id)
     {
         return $prefix + $id;
+    }
+
+    public function countDays($year, $month, $ignore)
+    {
+        $count = 0;
+        $counter = mktime(0, 0, 0, $month, 1, $year);
+        while (date("n", $counter) == $month) {
+            if (in_array(date("w", $counter), $ignore) == false) {
+                $count++;
+            }
+            $counter = strtotime("+1 day", $counter);
+        }
+        return $count;
+    }
+
+    public function getTotalSalaryByMonth($year, $month)
+    {
+        $basicSalaryObj = $this->salaries()->where(['month' => $month, 'year' => $year])->first();
+
+        if (is_null($basicSalaryObj)) {
+            $basicSalaryObj = $this->salaries()->latest()->first();
+        }
+
+        $basicSalary = $basicSalaryObj->amount;
+
+        $workingDays = WorkingDay::where(['month' => $month, 'year' => $year])->first()->working_days
+            ?? WorkingDay::getNormalWorkingDays($year, $month);
+
+        $overtime = $this->overtimes()->where(['month' => $month, 'year' => $year])->first();
+
+        $total = $overtime ? $overtime->getTotalOvertimeSalary($basicSalary, $workingDays) : $basicSalary;
+
+        return $total;
     }
 }

@@ -10,37 +10,43 @@
         <form method="GET" action="{{ route('reports.salary')}}">
             @method('GET')
             @csrf
-            <div class="form-group col-md-6 col-sm-12">
-                <label for="first_name">Chọn năm</label>
-                <div class="input-group">
-                    <select id="year-selection" class="form-control custom-select" style="width: 150px;" id="year"
-                        name="year">
+            <div class="form-group row">
+                <label for="year" class="col-xs-3 col-form-label mr-2">Năm</label>
+                <div class="col-xs-9">
+                    <select id="year-selection" class="form-control" id="year" name="year">
                         @foreach([2021, 2022, 2033] as $item)
-                        <option value="{{ $item }}">{{ $item }}</option>
+                        <option value="{{ $item }}"  @if ($item===(int) $year) {{ 'selected' }}
+                        @endif >{{ $item }}</option>
                         @endforeach
                     </select>
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">Lọc</button>
-                    </div>
                 </div>
             </div>
-            <div class="form-group col-md-6 col-sm-12">
-                <label for="first_name">Phòng Ban</label>
-                <div class="input-group">
-                    <select id="department_selection" class="form-control custom-select" style="width: 150px;" id="year"
-                        name="dêpartment_id">
-                        @foreach([2021, 2022, 2033] as $item)
-                        <option value="{{ $item }}">{{ $item }}</option>
+            <div class="form-group row">
+                <label for="department_id" class="col-xs-3 col-form-label mr-2">Bộ phận</label>
+                <div class="col-xs-9">
+                    <select class="form-control" id="department_id" name="department_id">
+                        @foreach($departmentOptions as $item)
+                        <option value="{{ $item['value'] }}" @if ($item['value']===(int) $departmentId) {{ 'selected' }}
+                            @endif>
+                            {{ $item['title'] }}</option>
                         @endforeach
                     </select>
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">Lọc</button>
-                    </div>
                 </div>
             </div>
+            <div class="form-group row">
+                <div class="offset-xs-3 col-xs-9">
+                    <button type="submit" class="btn btn-primary">Lọc</button>
+                </div>
+            </div>
+
         </form>
-        <div class="chart-container" style="position: relative; height:600px; width:800px">
-            <canvas id="myChart" width="400" height="400"></canvas>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <div class="chart-container" style="">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -50,49 +56,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script>
     $(function () {
+        var budgetData = {!!json_encode($budgetData) !!};
         var ctx = document.getElementById('myChart');
+
+        var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
+            'Tháng 8',
+            'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+        ];
+
+        var budgetPlanData = labels.map(item => {
+            return Math.round(budgetData[item]['Kế hoạch']);;
+        });
+
+        var actualBudgetData = labels.map(item => {
+            return Math.round(budgetData[item]['Thực tế']);;
+        });
+
         var barChartData = {
-            labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8',
-                'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
-            ],
+            labels: labels,
             datasets: [{
                 label: 'Kế hoạch',
                 backgroundColor: 'blue',
                 borderColor: 'white',
                 borderWidth: 1,
-                data: [
-                    2,
-                    2,
-                    3,
-                    4,
-                    4,
-                    5,
-                    6,
-                    5,
-                    6,
-                    5,
-                    6,
-                    3
-                ]
+                data: budgetPlanData
             }, {
                 label: 'Thực tế',
                 backgroundColor: 'red',
                 borderColor: 'white',
                 borderWidth: 1,
-                data: [
-                    2,
-                    2,
-                    3,
-                    4,
-                    1,
-                    3,
-                    3,
-                    3,
-                    3,
-                    3,
-                    3,
-                    3,
-                ]
+                data: actualBudgetData
             }]
 
         };
@@ -104,10 +97,28 @@
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            callback: function (value, index, values) {
+                            if (parseInt(value) >= 1000) {
+                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                    ",") + "VND";
+                            } else {
+                                return value + "VND";
+                            }
+                        }
                         }
                     }]
-                }
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (t, d) {
+                            var xLabel = d.datasets[t.datasetIndex].label;
+                            var yLabel = t.yLabel >= 1000 ? t.yLabel.toString().replace(
+                                /\B(?=(\d{3})+(?!\d))/g, ",") + 'VND' : t.yLabel + 'VND';
+                            return xLabel + ': ' + yLabel;
+                        }
+                    }
+                },
             }
         });
     });

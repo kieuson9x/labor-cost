@@ -17,8 +17,9 @@ class CreateBudgetPlansTable extends Migration
             $table->id();
 
             $table->integer('department_id');
-            $table->date('date');
-            $table->float('quantity')->default(0);
+            $table->integer('month');
+            $table->integer('year');
+            $table->double('amount')->default(0);
 
             $table->timestamps();
         });

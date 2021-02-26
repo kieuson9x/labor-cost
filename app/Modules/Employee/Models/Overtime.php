@@ -2,6 +2,7 @@
 
 namespace App\Modules\Employee\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 
 class Overtime extends Model
@@ -27,4 +28,16 @@ class Overtime extends Model
         'sunday_night' => 2.7,
         'holiday_night' => 3.9,
     ];
+
+    public function getTotalOvertimeSalary($basicSalary, $workingDays)
+    {
+        $sum = 0;
+
+        foreach (Overtime::MAPPING_OVERTIME_RATE as $key => $rate) {
+            $hour = data_get($this, $key);
+            $sum += (($basicSalary / $workingDays) * $rate * ($hour / 8));
+        }
+
+        return $sum;
+    }
 }

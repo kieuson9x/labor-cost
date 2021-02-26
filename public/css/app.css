@@ -17176,3 +17176,9 @@ readers do not read off random characters that represent icons */
   border-bottom: 1px solid #e5e5e5;
 }
 
+.chart-container {
+  position: relative;
+  max-height: 500px;
+  max-width: 100%;
+}
+

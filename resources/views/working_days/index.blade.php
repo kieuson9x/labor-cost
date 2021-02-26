@@ -58,7 +58,7 @@
                         @endfor
                 </tr>
                 <tr>
-                    <td>nghỉ chiều thứ 7</td>
+                    <td>Nghỉ chiều thứ 7</td>
                     @for ($i = 0; $i < 12; $i++) <td data-halign="center">
                         {{ data_get($workingDays->where('month', $i + 1)->first(), 'saturday_afternoon_day_off', 0) }}
                         </td>
@@ -91,10 +91,6 @@
 
         $('#table_working_days').on('editable-save.bs.table', function (e, field, row, oldValue) {
             var url = "{{route('working_days.update')}}";
-
-            if (row["0"] === "Ngày làm việc thực tế" || row["0"] === "Lịch tháng") {
-                toast.error(` ${row["0"]} được tự động tính toán! Không cần sửa`);
-            } else {
                 $.ajax({
                 data: {
                     'action': 'update',
@@ -117,7 +113,6 @@
                 // If fail
                 toast.error(textStatus + ': ' + errorThrown);
             });
-            }
         });
     });
 

@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Modules\Employee\Models\Employee;
+use App\Modules\WorkingDay\Models\WorkingDay;
 use App\Modules\Employee\Observers\EmployeeObserver;
+use App\Modules\WorkingDay\Observers\WorkingDayObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Employee::observe(EmployeeObserver::class);
+        WorkingDay::observe(WorkingDayObserver::class);
     }
 }

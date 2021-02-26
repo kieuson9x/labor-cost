@@ -33,9 +33,18 @@ class WorkingDaysController extends Controller
      */
     public function update(Request $request)
     {
-        return $request->all();
+        $fieldName = WorkingDay::MAPPING_TYPE[$request->input('type')];
 
-        $fieldName = Overtime::MAPPING_OVERTIME_TYPE[$request->input('type')];
+        $workingDay = WorkingDay::firstOrCreate([
+            'year' => $request->input('year'),
+            'month' => $request->input('month'),
+        ]);
+
+        $workingDay->update([
+            "{$fieldName}" => $request->input('value')
+        ]);
+
+        $workingDay->refresh();
 
         return [];
     }
