@@ -3,7 +3,7 @@
 @section('main')
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="display-3">Employees</h1>
+        <h1 class="display-3">Nhân viên</h1>
         <a href="{{ route('employees.create')}}" class="btn btn-outline-primary mb-2">Tạo nhân viên mới</a>
 
         <table class="table table-striped" id="table_employees">

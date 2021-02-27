@@ -85,9 +85,9 @@
     $(function () {
         var toast = new Toasty();
 
-        $('#table_working_days').bootstrapTable({
-            resizable: true,
-        });
+        // $('#table_working_days').bootstrapTable({
+        //     resizable: true,
+        // });
 
         $('#table_working_days').on('editable-save.bs.table', function (e, field, row, oldValue) {
             var url = "{{route('working_days.update')}}";

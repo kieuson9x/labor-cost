@@ -14,6 +14,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {{ (request()->routeIs('departments')) ? 'active' : '' }}" href="/departments">
+                    <i class="fa fa-building" aria-hidden="true"></i>
+                    Bộ phận
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('working_days*')) ? 'active' : '' }}" href="/working-days">
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                     Lịch làm việc năm
@@ -31,6 +37,12 @@
                     href="/reports/salary">
                     <i class="fa fa-book" aria-hidden="true"></i>
                     Báo cáo lương
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ (request()->routeIs('products*')) ? 'active' : '' }}" href="/products">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                    Sản phẩm
                 </a>
             </li>
         </ul>

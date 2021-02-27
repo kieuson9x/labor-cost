@@ -23,6 +23,8 @@ class Department extends Model
         return $this->hasMany(BudgetPlan::class);
     }
 
+
+    // Lấy kế hoạch phòng ban
     public function getBudgetPlan($year, $month = null)
     {
         if (!is_null($month)) {
