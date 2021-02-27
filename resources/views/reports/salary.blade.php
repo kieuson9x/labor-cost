@@ -15,8 +15,8 @@
                 <div class="col-xs-9">
                     <select id="year-selection" class="form-control" id="year" name="year">
                         @foreach([2021, 2022, 2033] as $item)
-                        <option value="{{ $item }}"  @if ($item===(int) $year) {{ 'selected' }}
-                        @endif >{{ $item }}</option>
+                        <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -44,7 +44,13 @@
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <div class="chart-container" style="">
-                    <canvas id="myChart"></canvas>
+                    <canvas id="total_chart"></canvas>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-6">
+                <div class="chart-container" style="">
+                    <canvas id="monthly_chart"></canvas>
                 </div>
             </div>
         </div>
@@ -57,69 +63,93 @@
 <script>
     $(function () {
         var budgetData = {!!json_encode($budgetData) !!};
-        var ctx = document.getElementById('myChart');
+        var totalChartCtx = document.getElementById('total_chart');
+        var monthlyChartCtx = document.getElementById('monthly_chart');
 
         var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
             'Tháng 8',
             'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
         ];
 
-        var budgetPlanData = labels.map(item => {
-            return Math.round(budgetData[item]['Kế hoạch']);;
-        });
+        var barchartTotal = {
+            labels: ['Tổng Ngân sách'],
+            datasets: [{
+                label: 'Kế hoạch',
+                backgroundColor: 'blue',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [Math.round(budgetData['Tổng']['Kế hoạch'])]
+            }, {
+                label: 'Thực tế',
+                backgroundColor: 'red',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: [Math.round(budgetData['Tổng']['Thực tế'])]
+            }]
+        }
 
-        var actualBudgetData = labels.map(item => {
-            return Math.round(budgetData[item]['Thực tế']);;
-        });
-
-        var barChartData = {
+        var barChartDataMonthly = {
             labels: labels,
             datasets: [{
                 label: 'Kế hoạch',
                 backgroundColor: 'blue',
                 borderColor: 'white',
                 borderWidth: 1,
-                data: budgetPlanData
+                data: labels.map(item => {
+                    return Math.round(budgetData[item]['Kế hoạch']);
+                })
+
             }, {
                 label: 'Thực tế',
                 backgroundColor: 'red',
                 borderColor: 'white',
                 borderWidth: 1,
-                data: actualBudgetData
+                data: labels.map(item => {
+                    return Math.round(budgetData[item]['Thực tế']);
+                })
             }]
 
         };
 
-        var myBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: barChartData,
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            callback: function (value, index, values) {
+        var globalOptions = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value, index, values) {
                             if (parseInt(value) >= 1000) {
                                 return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                    ",") + "VND";
+                                    ".") + "VND";
                             } else {
                                 return value + "VND";
                             }
                         }
-                        }
-                    }]
-                },
-                tooltips: {
-                    callbacks: {
-                        label: function (t, d) {
-                            var xLabel = d.datasets[t.datasetIndex].label;
-                            var yLabel = t.yLabel >= 1000 ? t.yLabel.toString().replace(
-                                /\B(?=(\d{3})+(?!\d))/g, ",") + 'VND' : t.yLabel + 'VND';
-                            return xLabel + ': ' + yLabel;
-                        }
                     }
-                },
-            }
+                }]
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (t, d) {
+                        var xLabel = d.datasets[t.datasetIndex].label;
+                        var yLabel = t.yLabel >= 1000 ? t.yLabel.toString().replace(
+                            /\B(?=(\d{3})+(?!\d))/g, ".") + 'VND' : t.yLabel + 'VND';
+                        return xLabel + ': ' + yLabel;
+                    }
+                }
+            },
+        };
+
+
+        var myBarChartForMonthly = new Chart(monthlyChartCtx, {
+            type: 'bar',
+            data: barChartDataMonthly,
+            options: globalOptions
+        });
+
+        var myBarChartForTotal = new Chart(totalChartCtx, {
+            type: 'bar',
+            data: barchartTotal,
+            options: globalOptions
         });
     });
 

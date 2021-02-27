@@ -21,7 +21,7 @@ class DepartmentSalaryReportController extends Controller
     public function salary(Request $request)
     {
         $year = $request->input('year', Carbon::now()->year);
-        $departmentId = $request->input('department_id');
+        $departmentId = $request->input('department_id', 0);
 
         // Danh sách phòng ban
         $departmentOptions = Department::getDepartmentOptions();

@@ -38,5 +38,10 @@ Route::namespace('Report')->prefix('reports')->name('reports.')->group(function 
     Route::get('/salary', 'DepartmentSalaryReportController@salary')->name('salary');
 });
 
+Route::namespace('Department')->prefix('departments')->name('departments.')->group(function () {
+    Route::get('/budget-plans', 'DepartmentBudgetPlanController@index')->name('budget_plans.index');
+    Route::put('/budget-plans', 'DepartmentBudgetPlanController@update')->name('budget_plans.update');
+});
+
 
 Route::get('/home', 'HomeController@index')->name('home');
