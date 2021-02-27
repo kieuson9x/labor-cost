@@ -44,5 +44,10 @@ Route::namespace('Department')->prefix('departments')->name('departments.')->gro
     Route::put('/budget-plans', 'DepartmentBudgetPlanController@update')->name('budget_plans.update');
 });
 
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::namespace('Product')->prefix('products')->name('products.')->group(function () {
+    Route::get('/', 'ProductController@index')->name('index');
+    Route::get('/create', 'ProductController@create')->name('create');
+    Route::get('/edit/{id}', 'ProductController@edit')->name('edit');
+    Route::post('/store', 'ProductController@store')->name('store');
+    Route::put('/update/{id}', 'ProductController@update')->name('update');
+});

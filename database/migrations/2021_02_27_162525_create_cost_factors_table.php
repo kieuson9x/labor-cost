@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductEffortsTable extends Migration
+class CreateCostFactorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateProductEffortsTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_efforts', function (Blueprint $table) {
+        Schema::create('cost_factors', function (Blueprint $table) {
             $table->id();
 
-            $table->integer('product_id');
-            $table->float('effort_hours');
-            $table->date('date')->nullable();
+            $table->string('cost_factor_code');
+            $table->string('name')->nullable();
 
             $table->timestamps();
         });
@@ -31,6 +30,6 @@ class CreateProductEffortsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_efforts');
+        Schema::dropIfExists('cost_factors');
     }
 }
