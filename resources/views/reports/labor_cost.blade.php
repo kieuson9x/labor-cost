@@ -84,7 +84,7 @@
                 borderColor: 'white',
                 borderWidth: 1,
                 data: labels.map(item => {
-                    return Math.round(numberOfEmployeeData[item]);
+                    return numberOfEmployeeData[item] === 0 ? 0.1 : Math.round(numberOfEmployeeData[item]);
                 })
             },
             {
@@ -93,7 +93,7 @@
                 borderColor: 'white',
                 borderWidth: 1,
                 data: labels.map(item => {
-                    return Math.round(totalNeededEmployeeData[item]);
+                    return totalNeededEmployeeData[item] === 0 ? 0.1 : Math.round(totalNeededEmployeeData[item]);
                 })
             }
             ]
@@ -103,12 +103,12 @@
         var totalNeededTimeChartData = {
             labels: labels,
             datasets: [{
-                label: 'Thời gian để làm sản phẩm theo kế hoạch',
-                backgroundColor: 'blue',
+                labels: labels,
+                backgroundColor: ["red", "blue", "green", "cyan", "yellow", "purple", "brown", "grey", "pink", "orange", "teal", "olive"],
                 borderColor: 'white',
                 borderWidth: 1,
                 data: labels.map(item => {
-                    return Math.round(totalNeededTimeData[item]);
+                    return totalNeededTimeData[item] === 0 ? 0.1 : Math.round(totalNeededTimeData[item]);
                 })
             }]
         };
@@ -116,13 +116,23 @@
         var numberOfEmployeeChart = new Chart(numberOfEmployeeCtx, {
             type: 'bar',
             data: numberOfEmployeeChartData,
-            // options: globalOptions
+            options: {
+                title: {
+                    display: true,
+                    text: 'Biểu đồ so sánh số nhân công và số nhân công cần trong tháng'
+                }
+            }
         });
 
         var totalNeededTimeChart = new Chart(totalNeededTimeCtx, {
-            type: 'bar',
+            type: 'pie',
             data: totalNeededTimeChartData,
-            // options: globalOptions
+            options: {
+                title: {
+                    display: true,
+                    text: 'Biểu đồ tổng thời gian để làm sản phẩm theo kế hoạch đã có'
+                }
+            }
         });
     });
 
