@@ -5,9 +5,9 @@
 @section('main')
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="display-3">Báo cáo ngân sách lương</h1>
+        <h1 class="display-3">Báo cáo chi phí nhân công</h1>
 
-        <form method="GET" action="{{ route('reports.salary')}}" class="form-horizontal">
+        <form method="GET" action="{{ route('reports.labor-cost')}}" class="form-horizontal">
             @method('GET')
             @csrf
             <div class="form-group row">
@@ -46,13 +46,13 @@
         <div class="row">
             <div class="col-sm-12 col-md-6">
                 <div class="chart-container" style="">
-                    <canvas id="total_chart"></canvas>
+                    <canvas id="number_of_employees"></canvas>
                 </div>
             </div>
 
             <div class="col-sm-12 col-md-6">
                 <div class="chart-container" style="">
-                    <canvas id="monthly_chart"></canvas>
+                    <canvas id="total_needed_time"></canvas>
                 </div>
             </div>
         </div>
@@ -64,94 +64,65 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script>
     $(function () {
-        var budgetData = {!!json_encode($budgetData) !!};
-        var totalChartCtx = document.getElementById('total_chart');
-        var monthlyChartCtx = document.getElementById('monthly_chart');
+        var numberOfEmployeeData = {!!json_encode($numberOfEmployeeData) !!};
+        var totalNeededTimeData= {!!json_encode($totalNeededTimeData) !!};
+        var totalNeededEmployeeData= {!!json_encode($totalNeededEmployeeData) !!};
+
+        var numberOfEmployeeCtx = document.getElementById('number_of_employees');
+        var totalNeededTimeCtx = document.getElementById('total_needed_time');
 
         var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
             'Tháng 8',
             'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
         ];
 
-        var barchartTotal = {
-            labels: ['Tổng Ngân sách'],
-            datasets: [{
-                label: 'Kế hoạch',
-                backgroundColor: 'blue',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: [Math.round(budgetData['Tổng']['Kế hoạch'])]
-            }, {
-                label: 'Thực tế',
-                backgroundColor: 'red',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: [Math.round(budgetData['Tổng']['Thực tế'])]
-            }]
-        }
-
-        var barChartDataMonthly = {
+        var numberOfEmployeeChartData = {
             labels: labels,
             datasets: [{
-                label: 'Kế hoạch',
-                backgroundColor: 'blue',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: labels.map(item => {
-                    return Math.round(budgetData[item]['Kế hoạch']);
-                })
-
-            }, {
-                label: 'Thực tế',
+                label: 'Số nhân công hiện có',
                 backgroundColor: 'red',
                 borderColor: 'white',
                 borderWidth: 1,
                 data: labels.map(item => {
-                    return Math.round(budgetData[item]['Thực tế']);
+                    return Math.round(numberOfEmployeeData[item]);
+                })
+            },
+            {
+                label: 'Số nhân công cần',
+                backgroundColor: 'blue',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: labels.map(item => {
+                    return Math.round(totalNeededEmployeeData[item]);
+                })
+            }
+            ]
+        };
+
+
+        var totalNeededTimeChartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Thời gian để làm sản phẩm theo kế hoạch',
+                backgroundColor: 'blue',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: labels.map(item => {
+                    return Math.round(totalNeededTimeData[item]);
                 })
             }]
-
         };
 
-        var globalOptions = {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        callback: function (value, index, values) {
-                            if (parseInt(value) >= 1000) {
-                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                    ".") + "VND";
-                            } else {
-                                return value + "VND";
-                            }
-                        }
-                    }
-                }]
-            },
-            tooltips: {
-                callbacks: {
-                    label: function (t, d) {
-                        var xLabel = d.datasets[t.datasetIndex].label;
-                        var yLabel = t.yLabel >= 1000 ? t.yLabel.toString().replace(
-                            /\B(?=(\d{3})+(?!\d))/g, ".") + 'VND' : t.yLabel + 'VND';
-                        return xLabel + ': ' + yLabel;
-                    }
-                }
-            },
-        };
-
-
-        var myBarChartForMonthly = new Chart(monthlyChartCtx, {
+        var numberOfEmployeeChart = new Chart(numberOfEmployeeCtx, {
             type: 'bar',
-            data: barChartDataMonthly,
-            options: globalOptions
+            data: numberOfEmployeeChartData,
+            // options: globalOptions
         });
 
-        var myBarChartForTotal = new Chart(totalChartCtx, {
+        var totalNeededTimeChart = new Chart(totalNeededTimeCtx, {
             type: 'bar',
-            data: barchartTotal,
-            options: globalOptions
+            data: totalNeededTimeChartData,
+            // options: globalOptions
         });
     });
 

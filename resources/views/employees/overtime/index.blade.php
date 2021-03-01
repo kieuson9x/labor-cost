@@ -28,7 +28,7 @@
                 <label for="first_name">Chọn năm</label>
                 <div class="input-group">
                     <select id="year-selection" class="form-control custom-select" style="width: 150px;" id="year" name="year">
-                        @foreach([2021, 2022, 2033] as $item)
+                        @foreach([2021, 2022, 2023] as $item)
                         <option value="{{ $item }}">{{ $item }}</option>
                         @endforeach
                     </select>

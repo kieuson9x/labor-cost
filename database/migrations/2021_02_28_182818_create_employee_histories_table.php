@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductPlansTable extends Migration
+class CreateEmployeeHistoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateProductPlansTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_plans', function (Blueprint $table) {
+        Schema::create('employee_histories', function (Blueprint $table) {
             $table->id();
 
-            $table->integer('department_id');
-            $table->integer('product_id');
-            $table->integer('quantity')->default(0);
-            $table->integer('month');
-            $table->integer('year');
+            $table->integer('employee_id');
+            $table->date('start_date');
+            $table->date('end_date');
 
             $table->timestamps();
         });
@@ -33,6 +31,6 @@ class CreateProductPlansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_plans');
+        Schema::dropIfExists('employee_histories');
     }
 }

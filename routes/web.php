@@ -36,12 +36,18 @@ Route::prefix('working-days')->name('working_days.')->group(function () {
 
 Route::namespace('Report')->prefix('reports')->name('reports.')->group(function () {
     Route::get('/salary', 'DepartmentSalaryReportController@salary')->name('salary');
+    Route::get('/labor-cost', 'DepartmentLaborCostController@index')->name('labor-cost');
 });
 
 Route::namespace('Department')->prefix('departments')->name('departments.')->group(function () {
     Route::get('/', 'DepartmentController@index')->name('index');
     Route::get('/budget-plans', 'DepartmentBudgetPlanController@index')->name('budget_plans.index');
     Route::put('/budget-plans', 'DepartmentBudgetPlanController@update')->name('budget_plans.update');
+
+    Route::get('/product-plans', 'DepartmentProductPlanController@index')->name('product_plans.index');
+    Route::put('/product-plans', 'DepartmentProductPlanController@update')->name('product_plans.update');
+    Route::get('/product-plans/create', 'DepartmentProductPlanController@create')->name('product_plans.create');
+    Route::post('/product-plans/store', 'DepartmentProductPlanController@store')->name('product_plans.store');
 });
 
 Route::namespace('Product')->prefix('products')->name('products.')->group(function () {

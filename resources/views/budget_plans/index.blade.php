@@ -7,20 +7,20 @@
             @method('GET')
             @csrf
             <div class="form-group row">
-                <label for="year" class="col-xs-3 col-form-label mr-2">Năm</label>
-                <div class="col-xs-9">
+                <label for="year" class="col-xs-2 col-form-label mr-2">Năm</label>
+                <div class="col-xs-4 mr-2">
                     <select id="year-selection" class="form-control" id="year" name="year">
-                        @foreach([2021, 2022, 2033] as $item)
+                        @foreach([2021, 2022, 2023] as $item)
                         <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
                         </option>
                         @endforeach
                     </select>
                 </div>
-            </div>
-            <div class="form-group row">
-                <div class="offset-xs-3 col-xs-9">
-                    <button type="submit" class="btn btn-primary">Lọc</button>
-                </div>
+                <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
+                    <i
+                        class="material-icons">filter_alt</i>
+                    Lọc
+                </button>
             </div>
         </form>
 

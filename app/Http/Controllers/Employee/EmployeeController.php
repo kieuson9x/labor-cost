@@ -109,7 +109,13 @@ class EmployeeController extends Controller
 
         $employee->full_name =  $request->get('full_name');
         $employee->department_id = $request->get('department_id');
-        $salary = $employee->salaries()->latest()->first();
+
+        $now = Carbon::now();
+
+        $salary = $employee->salaries()->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->latest()
+            ->first();
 
         if ($salary) {
             $salary->update([
@@ -117,8 +123,9 @@ class EmployeeController extends Controller
             ]);
         } else {
             $employee->salaries()->create([
-                'amount' => $request->get('amount'),
-                'date' => Carbon::now()->startOfMonth()->toDateTimeString()
+                'amount'        => $request->get('amount'),
+                'start_date'    => Carbon::createFromDate($now->year, 1, 1)->format('Y-m-d'),
+                'end_date'    => Carbon::createFromDate($now->year, 12, 31)->format('Y-m-d'),
             ]);
         }
 

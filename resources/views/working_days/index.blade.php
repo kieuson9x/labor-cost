@@ -3,18 +3,25 @@
 <div class="row">
     <div class="col-sm-12">
         <h1 class="display-3">Working Days</h1>
-        <form method="GET" action="{{ route('working_days.index') }}">
+        <form method="GET" action="{{ route('working_days.index') }}" class="form-horizontal">
             @method('GET')
             @csrf
-            <div class="form-group">
-                <label for="first_name">Year</label>
-                <select class="form-control" id="year" name="year">
-                    @foreach([2021, 2022, 2033] as $item)
-                    <option value="{{ $item }}">{{ $item }}</option>
-                    @endforeach
-                </select>
+            <div class="form-group row">
+                <label for="year" class="col-xs-2 col-form-label mr-2">Năm</label>
+                <div class="col-xs-4 mr-2">
+                    <select id="year-selection" class="form-control" id="year" name="year">
+                        @foreach([2021, 2022, 2023] as $item)
+                        <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
+                    <i
+                        class="material-icons">filter_alt</i>
+                    Lọc
+                </button>
             </div>
-            <button type="submit" class="btn btn-primary">View</button>
         </form>
 
         <table class="table table-striped" data-toggle="table" id="table_working_days" data-editable="true">

@@ -19,10 +19,8 @@ class CreateEmployeesTable extends Migration
             $table->string('employee_code')->nullable();
             $table->string('full_name');
             $table->integer('department_id');
-            $table->date('resign_date')->nullable();
 
             $table->timestamps();
-
         });
     }
 

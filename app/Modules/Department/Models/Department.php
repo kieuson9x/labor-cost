@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\Employee\Models\Employee;
 use App\Modules\Department\Models\BudgetPlan;
+use App\Modules\Department\Models\ProductPlan;
 
 class Department extends Model
 {
@@ -21,6 +22,11 @@ class Department extends Model
     public function budgetPlans()
     {
         return $this->hasMany(BudgetPlan::class);
+    }
+
+    public function productPlans()
+    {
+        return $this->hasMany(ProductPlan::class, 'department_id', 'id');
     }
 
 
@@ -57,7 +63,7 @@ class Department extends Model
     // Danh sách các phòng ban
     public static function getDepartmentOptions()
     {
-        return Cache::remember('users', 24 * 60, function () {
+        return Cache::remember('departments', 24 * 60, function () {
             return DB::table('departments')->get()->map(function ($item) {
                 return [
                     'title' => $item->name,

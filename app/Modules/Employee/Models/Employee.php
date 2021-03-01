@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Modules\Employee\Models\Overtime;
 use App\Modules\Department\Models\Department;
 use App\Modules\WorkingDay\Models\WorkingDay;
+use App\Modules\Employee\Models\EmployeeHistory;
 
 class Employee extends Model
 {
@@ -21,6 +22,11 @@ class Employee extends Model
     public function salaries()
     {
         return $this->hasMany(Salary::class, 'employee_id', 'id');
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(EmployeeHistory::class, 'employee_id', 'id');
     }
 
     public function overtimes()
@@ -48,7 +54,12 @@ class Employee extends Model
 
     public function getTotalSalaryByMonth($year, $month)
     {
-        $basicSalaryObj = $this->salaries()->where(['month' => $month, 'year' => $year])->first();
+        $date = Carbon::createFromDate($year, $month);
+
+        $basicSalaryObj = $this->salaries()->where('start_date', '<=', $date)
+            ->where('end_date', '>=', $date)
+            ->latest()
+            ->first();
 
         if (is_null($basicSalaryObj)) {
             $basicSalaryObj = $this->salaries()->latest()->first();
@@ -59,9 +70,10 @@ class Employee extends Model
         $workingDays = WorkingDay::where(['month' => $month, 'year' => $year])->first()->working_days
             ?? WorkingDay::getNormalWorkingDays($year, $month);
 
+
         $overtime = $this->overtimes()->where(['month' => $month, 'year' => $year])->first();
 
-        $total = $overtime ? $overtime->getTotalOvertimeSalary($basicSalary, $workingDays) : $basicSalary;
+        $total = $overtime ? $basicSalary + $overtime->getTotalOvertimeSalary($basicSalary, $workingDays) : $basicSalary;
 
         return $total;
     }

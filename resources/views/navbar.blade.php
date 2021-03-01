@@ -2,47 +2,68 @@
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ (request()->is('/')) ? 'active' : '' }}" href="/">
-                    <i class="fa fa-home" aria-hidden="true"></i>
-                    Home
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('employees*')) ? 'active' : '' }}" href="/employees">
-                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <i class="material-icons" style="font-size: 13px">people</i>
                     Nhân viên
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('departments')) ? 'active' : '' }}" href="/departments">
-                    <i class="fa fa-building" aria-hidden="true"></i>
+                    <i class="material-icons" style="font-size: 13px">doorbell</i>
                     Bộ phận
                 </a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('working_days*')) ? 'active' : '' }}" href="/working-days">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <i class="material-icons" style="font-size: 13px">calendar_today</i>
                     Lịch làm việc năm
                 </a>
             </li>
+
+            <div class="dropdown-divider"></div>
+
+
             <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('departments.budget_plans*')) ? 'active' : '' }}"
                     href="/departments/budget-plans">
-                    <i class="fa fa-file-text" aria-hidden="true"></i>
+                    <i class="material-icons" style="font-size: 13px">document_scanner</i>
                     Nhập kế hoạch ngân sách
                 </a>
             </li>
+
+            <div class="dropdown-divider"></div>
+
+            <li class="nav-item">
+                <a class="nav-link {{ (request()->routeIs('products*')) ? 'active' : '' }}" href="/products">
+                    <i class="material-icons" style="font-size: 13px">production_quantity_limits</i>
+                    Sản phẩm
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ (request()->routeIs('product_plans*')) ? 'active' : '' }}" href="/departments/product-plans">
+                    <i class="material-icons" style="font-size: 13px">document_scanner</i>
+                    Kế hoạch sản xuất sẩn phẩm theo phòng ban
+                </a>
+            </li>
+
+            <div class="dropdown-divider"></div>
+
+
             <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('reports.salary*')) ? 'active' : '' }}"
                     href="/reports/salary">
-                    <i class="fa fa-book" aria-hidden="true"></i>
+                    <i class="material-icons" style="font-size: 13px">bar_chart</i>
                     Báo cáo lương
                 </a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('products*')) ? 'active' : '' }}" href="/products">
-                    <i class="fa fa-book" aria-hidden="true"></i>
-                    Sản phẩm
+                <a class="nav-link {{ (request()->routeIs('reports.labor-cost*')) ? 'active' : '' }}"
+                    href="/reports/labor-cost">
+                    <i class="material-icons" style="font-size: 13px">bar_chart</i>
+                    Báo cáo chi phí nhân công
                 </a>
             </li>
         </ul>

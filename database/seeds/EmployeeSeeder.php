@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Modules\Employee\Models\Salary;
 use App\Modules\Employee\Models\Employee;
 use App\Modules\Department\Models\Department;
+use App\Modules\Employee\Models\EmployeeHistory;
 
 class EmployeeSeeder extends Seeder
 {
@@ -31,15 +32,24 @@ class EmployeeSeeder extends Seeder
                 'department_id' => $department->id ?? null
             ]);
 
-
             $amount = floatval(str_replace('.', ',', str_replace(',', '', $record['Lương chính'])));
 
-            Salary::updateOrCreate([
-                'employee_id' => $employee->id,
+            Salary::firstOrCreate([
+                'employee_id'       => $employee->id,
+                'amount'            => $amount,
             ], [
-                'employee_id'    => $employee->id,
-                'amount'        => $amount,
-                'date'          => Carbon::now()->startOfMonth()->toDateTimeLocalString()
+                'employee_id'       => $employee->id,
+                'amount'            => $amount,
+                'start_date'        => Carbon::createFromDate(2021, 1, 1)->format('Y-m-d'),
+                'end_date'          => Carbon::createFromDate(2021, 12, 31)->format('Y-m-d')
+            ]);
+
+            EmployeeHistory::firstOrCreate([
+                'employee_id'       => $employee->id,
+            ], [
+                'employee_id'       => $employee->id,
+                'start_date'        => Carbon::createFromDate(2021, 1, 1)->format('Y-m-d'),
+                'end_date'          => Carbon::createFromDate(2021, 12, 31)->format('Y-m-d'),
             ]);
         }
     }
