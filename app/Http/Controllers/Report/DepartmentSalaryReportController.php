@@ -33,20 +33,24 @@ class DepartmentSalaryReportController extends Controller
         $department = Department::find($departmentId) ?? Department::first();
         $budgetData = array();
         $budgetData['Tổng'] = [
-            'Kế hoạch' => 0,
-            'Thực tế' => 0
+            'Luỹ kế theo kế hoạch' => 0,
+            'Luỹ kế lương theo kế hoạch sản xuất' => 0,
+            'Chi phí thực tế ERP' => 0
         ];
 
         for ($i = 1; $i <= 12; $i++) {
             $budgetPlan = data_get($department->getBudgetPlan($year, $i), 'amount');
             $actualBudget = $department->getTotalSalariesOfDepartment($year, $i);
+            $budgetByAccounting = data_get($department->budgets()->where(['year' => $year, 'month' => $i])->latest()->first(), 'amount');
 
-            $budgetData['Tổng']['Kế hoạch'] += $budgetPlan;
-            $budgetData['Tổng']['Thực tế'] += $actualBudget;
+            $budgetData['Tổng']['Luỹ kế theo kế hoạch'] += $budgetPlan;
+            $budgetData['Tổng']['Luỹ kế lương theo kế hoạch sản xuất'] += $actualBudget;
+            $budgetData['Tổng']['Chi phí thực tế ERP'] += $budgetByAccounting;
 
             $budgetData["Tháng {$i}"] = [
-                'Kế hoạch' => $budgetPlan,
-                'Thực tế' => $actualBudget
+                'Luỹ kế theo kế hoạch' => $budgetPlan,
+                'Luỹ kế lương theo kế hoạch sản xuất' => $actualBudget,
+                'Chi phí thực tế ERP' => $budgetByAccounting
             ];
         }
 

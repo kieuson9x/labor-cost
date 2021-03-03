@@ -5,7 +5,7 @@
 @section('main')
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="display-3">Báo cáo ngân sách lương</h1>
+        <h1 class="display-3">Biểu đồ lương</h1>
 
         <form method="GET" action="{{ route('reports.salary')}}" class="form-horizontal">
             @method('GET')
@@ -34,28 +34,27 @@
             </div>
 
             <div class="form-group row">
-                    <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
-                        <i
-                            class="material-icons">filter_alt</i>
-                        Lọc
-                    </button>
+                <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
+                    <i class="material-icons">filter_alt</i>
+                    Lọc
+                </button>
             </div>
 
         </form>
 
         <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <div class="chart-container" style="">
-                    <canvas id="total_chart"></canvas>
-                </div>
-            </div>
-
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-8">
                 <div class="chart-container" style="">
                     <canvas id="monthly_chart"></canvas>
                 </div>
             </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="chart-container" style="">
+                    <canvas id="total_chart"></canvas>
+                </div>
+            </div>
         </div>
+
 
     </div>
 </div>
@@ -68,48 +67,86 @@
         var totalChartCtx = document.getElementById('total_chart');
         var monthlyChartCtx = document.getElementById('monthly_chart');
 
+        const LUY_KE_KH = {
+            "label":"Luỹ kế theo kế hoạch",
+            "name": "Luỹ kế theo kế hoạch",
+            "color": "#ff8a5b"
+        };
+        const LUY_KE_LUONG_KH_SX = {
+            "label":"Luỹ kế lương theo kế hoạch sản xuất",
+            "name": "Luỹ kế lương theo kế hoạch sản xuất",
+            "color": "#395b50",
+            "passColor": "green",
+            "failColor": "red"
+        };
+        const CHI_PHI_ERP = {
+            "label":"Chi phí thực tế ERP",
+            "name": "Chi phí thực tế ERP",
+            "color": "#5c9ead",
+            "passColor": "green",
+            "failColor": "red"
+        };
+
         var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
             'Tháng 8',
             'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
         ];
 
         var barchartTotal = {
-            labels: ['Tổng Ngân sách'],
+            labels: ['Tổng Ngân sách Năm'],
             datasets: [{
-                label: 'Kế hoạch',
-                backgroundColor: 'blue',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: [Math.round(budgetData['Tổng']['Kế hoạch'])]
-            }, {
-                label: 'Thực tế',
-                backgroundColor: 'red',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: [Math.round(budgetData['Tổng']['Thực tế'])]
-            }]
+                    label: LUY_KE_KH.label,
+                    backgroundColor: LUY_KE_KH.color,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    data: [Math.round(budgetData['Tổng'][LUY_KE_KH.name])]
+                }, {
+                    label: LUY_KE_LUONG_KH_SX.label,
+                    backgroundColor: LUY_KE_LUONG_KH_SX.color,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    data: [Math.round(budgetData['Tổng'][LUY_KE_LUONG_KH_SX.name])]
+                },
+                {
+                    label: CHI_PHI_ERP.label,
+                    backgroundColor: CHI_PHI_ERP.color,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    data: [Math.round(budgetData['Tổng'][CHI_PHI_ERP.name])]
+                }
+            ]
         }
-
         var barChartDataMonthly = {
             labels: labels,
             datasets: [{
-                label: 'Kế hoạch',
-                backgroundColor: 'blue',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: labels.map(item => {
-                    return Math.round(budgetData[item]['Kế hoạch']);
-                })
-
-            }, {
-                label: 'Thực tế',
-                backgroundColor: 'red',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: labels.map(item => {
-                    return Math.round(budgetData[item]['Thực tế']);
-                })
-            }]
+                    label: LUY_KE_KH.label,
+                    backgroundColor: LUY_KE_KH.color,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    data: labels.map(item => {
+                        return Math.round(budgetData[item][LUY_KE_KH.name]);
+                    })
+                }, {
+                    label: LUY_KE_LUONG_KH_SX.label,
+                    backgroundColor: LUY_KE_LUONG_KH_SX.color,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    data: labels.map(item => {
+                        return Math.round(budgetData[item][
+                            LUY_KE_LUONG_KH_SX.name
+                        ]);
+                    })
+                },
+                {
+                    label: CHI_PHI_ERP.label,
+                    backgroundColor: CHI_PHI_ERP.color,
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    data: labels.map(item => {
+                        return Math.round(budgetData[item][CHI_PHI_ERP.name]);
+                    }),
+                },
+            ]
 
         };
 
@@ -139,19 +176,105 @@
                     }
                 }
             },
+
         };
 
 
         var myBarChartForMonthly = new Chart(monthlyChartCtx, {
             type: 'bar',
             data: barChartDataMonthly,
-            options: globalOptions
+            options: {
+                ...globalOptions,
+                title: {
+                    display: true,
+                    text: 'Biểu đồ theo tháng'
+                },
+                animation: {
+                    onComplete: function () {
+                        var chartInstance = this.chart,
+                            ctx = chartInstance.ctx;
+                        var scales = chartInstance.scales;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.font = "600 20px Roboto";
+                        ctx.fillStyle = "red";
+                        const datasets = this.data.datasets;
+
+                        datasets.forEach(function (dataset, i) {
+                            var meta = chartInstance.controller.getDatasetMeta(i);
+
+                            meta.data.forEach(function (bar, index) {
+                                var data = dataset.data[index];
+
+
+                                var budgetPlan = datasets[0].data[index];
+                                var budget = datasets[1].data[index];
+                                var budgetErp = datasets[2].data[index];
+
+                                var compariableActualBudget = budgetErp === 0 ?
+                                    budget : budgetErp;
+                                var compariableActualBudgetIndex = budgetErp === 0 ?
+                                    1 : 2;
+
+                                var view = bar._view;
+                                var x = view.x;
+                                var yScale = scales['y-axis-0'];
+                                var y = yScale.bottom - 30;
+                                ctx.save();
+                                ctx.translate(view.x, y);
+
+                                ctx.rotate(-0.5 * Math.PI);
+
+                                if (compariableActualBudget > budgetPlan) {
+                                    if (budgetErp === 0) {
+                                        if (bar._model.datasetLabel ===
+                                            LUY_KE_LUONG_KH_SX.label) {
+                                            ctx.fillStyle = LUY_KE_LUONG_KH_SX.failColor;
+                                            ctx.fillText("Vượt", 0, 0);
+                                        }
+                                    } else {
+                                        if (bar._model.datasetLabel ===
+                                            CHI_PHI_ERP.label) {
+                                            ctx.fillStyle = CHI_PHI_ERP.failColor;
+                                            ctx.fillText("Vượt", 0, 0);
+
+                                        }
+                                    }
+
+                                } else {
+                                    if (budgetErp === 0) {
+                                        if (bar._model.datasetLabel ===
+                                            LUY_KE_LUONG_KH_SX.label) {
+                                            ctx.fillStyle = LUY_KE_LUONG_KH_SX.passColor;
+                                            ctx.fillText("OK", 0, 0);
+                                        }
+                                    } else {
+                                        if (bar._model.datasetLabel ===
+                                            CHI_PHI_ERP.label) {
+                                            ctx.fillStyle = CHI_PHI_ERP.passColor;
+                                            ctx.fillText("OK", 0, 0);
+                                        }
+                                    }
+                                }
+
+                                ctx.restore();
+                            });
+                        });
+                    }
+                }
+            }
         });
 
         var myBarChartForTotal = new Chart(totalChartCtx, {
             type: 'bar',
             data: barchartTotal,
-            options: globalOptions
+            options: {
+                ...globalOptions,
+                title: {
+                    display: true,
+                    text: 'Biểu đồ tổng theo năm'
+                }
+            }
         });
     });
 

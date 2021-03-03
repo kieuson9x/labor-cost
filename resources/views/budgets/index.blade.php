@@ -2,8 +2,8 @@
 @section('main')
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="display-3">Kế hoạch lương</h1>
-        <form method="GET" action="{{ route('departments.budget_plans.index') }}">
+        <h1 class="display-3">Luỹ kế thực tế</h1>
+        <form method="GET" action="{{ route('departments.budgets.index') }}">
             @method('GET')
             @csrf
             <div class="form-group row">
@@ -47,7 +47,7 @@
                     <tr>
                         <td>{{$department['title']}}</td>
                         @for ($i = 0; $i < 12; $i++) <td data-halign="center" id="{{$department['value']}}">
-                            {{ number_to_VND(data_get($budgetPlans->where('month', $i + 1)->where('department_id', $department['value'])->first(), 'amount', 0)) }}
+                            {{ number_to_VND(data_get($budgets->where('month', $i + 1)->where('department_id', $department['value'])->first(), 'amount', 0)) }}
                             </td>
                             @endfor
                     </tr>
@@ -72,7 +72,7 @@
         });
 
         $('#table_budget_plans').on('editable-save.bs.table', function (e, field, row, oldValue) {
-            var url = "{{route('departments.budget_plans.update')}}";
+            var url = "{{route('departments.budgets.update')}}";
                 var departmentId = row['_1_id'];
                 $.ajax({
                 data: {

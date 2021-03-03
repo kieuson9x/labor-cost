@@ -115,7 +115,7 @@
             }).done(function (response) {
                 // If successful
                 // show a successful message:
-                toast.success("You did something good!");
+                toast.success("Cập nhật thành công!");
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // If fail
                 toast.error(textStatus + ': ' + errorThrown);

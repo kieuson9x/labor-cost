@@ -5,7 +5,7 @@
 @section('main')
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="display-3">Báo cáo chi phí nhân công</h1>
+        <h1 class="display-3"> Biểu đồ tính nhân công</h1>
 
         <form method="GET" action="{{ route('reports.labor-cost')}}" class="form-horizontal">
             @method('GET')

@@ -29,6 +29,10 @@ class Department extends Model
         return $this->hasMany(ProductPlan::class, 'department_id', 'id');
     }
 
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class, 'department_id', 'id');
+    }
 
     // Lấy kế hoạch phòng ban
     public function getBudgetPlan($year, $month = null)

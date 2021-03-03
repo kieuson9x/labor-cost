@@ -32,6 +32,13 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link {{ (request()->routeIs('product_plans*')) ? 'active' : '' }}" href="/departments/budgets">
+                    <i class="material-icons" style="font-size: 13px">account_balance</i>
+                    Nhập luỹ kế thực tế
+                </a>
+            </li>
+
             <div class="dropdown-divider"></div>
 
             <li class="nav-item">
@@ -50,12 +57,11 @@
 
             <div class="dropdown-divider"></div>
 
-
             <li class="nav-item">
                 <a class="nav-link {{ (request()->routeIs('reports.salary*')) ? 'active' : '' }}"
                     href="/reports/salary">
                     <i class="material-icons" style="font-size: 13px">bar_chart</i>
-                    Báo cáo lương
+                    Biểu đồ lương
                 </a>
             </li>
 
@@ -63,7 +69,7 @@
                 <a class="nav-link {{ (request()->routeIs('reports.labor-cost*')) ? 'active' : '' }}"
                     href="/reports/labor-cost">
                     <i class="material-icons" style="font-size: 13px">bar_chart</i>
-                    Báo cáo chi phí nhân công
+                    Biểu đồ tính nhân công
                 </a>
             </li>
         </ul>
