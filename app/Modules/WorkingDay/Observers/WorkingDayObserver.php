@@ -13,24 +13,6 @@ class WorkingDayObserver
      * @param  \App\WorkingDay  $user
      * @return void
      */
-    public function creating(WorkingDay $workingDay)
-    {
-        $normalWorkingDays = WorkingDay::getNormalWorkingDays($workingDay->year, $workingDay->month);
-
-        $workingDay->working_days = $normalWorkingDays - $workingDay->annual_days_off - $workingDay->saturday_afternoon_day_off - $workingDay->holiday;
-
-        $workingDay->save();
-
-        return $workingDay;
-    }
-
-
-    /**
-     * Handle the WorkingDay "creating" event.
-     *
-     * @param  \App\WorkingDay  $user
-     * @return void
-     */
     public function updated(WorkingDay $workingDay)
     {
         $changes = $workingDay->getDirty();
