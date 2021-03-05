@@ -17,8 +17,7 @@
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
-                    <i
-                        class="material-icons">filter_alt</i>
+                    <i class="material-icons">filter_alt</i>
                     Lọc
                 </button>
             </div>
@@ -46,13 +45,13 @@
                 <tr>
                     <td>Lịch tháng</td>
                     @for ($i = 0; $i < 12; $i++) <td data-halign="center" data-editable={false}>
-                        {{ data_get($workingDays->where('month', $i + 1)->first(), 'daysInMonth', 0) }}
+                        {{ $daysInMonths[$i] ?? 0 }}
                         </td>
                         @endfor
                 </tr>
                 <tr>
                     <td>Ngày làm việc thực tế</td>
-                    @for ($i = 0; $i < 12; $i++) <td data-halign="center" data-editable="false" >
+                    @for ($i = 0; $i < 12; $i++) <td data-halign="center" data-editable="false">
                         {{ data_get($workingDays->where('month', $i + 1)->first(), 'working_days', 0) }}
                         </td>
                         @endfor
@@ -97,29 +96,33 @@
         // });
 
         $('#table_working_days').on('editable-save.bs.table', function (e, field, row, oldValue) {
-            var url = "{{route('working_days.update')}}";
+            if (row["0"] === 'Lịch tháng') {
+                toast.info("Số ngày trong tháng được tính tự động!")
+            } else {
+                var url = "{{route('working_days.update')}}";
                 $.ajax({
-                data: {
-                    'action': 'update',
-                    'month': field,
-                    'year': "{{$year}}",
-                    'type': row["0"],
-                    'value': row[field]
-                },
-                dataType: 'json',
-                type: "PUT",
-                url: url,
-                headers: {
-                    'X-CSRF-Token': '{{ csrf_token() }}',
-                },
-            }).done(function (response) {
-                // If successful
-                // show a successful message:
-                toast.success("Cập nhật thành công!");
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                // If fail
-                toast.error(textStatus + ': ' + errorThrown);
-            });
+                    data: {
+                        'action': 'update',
+                        'month': field,
+                        'year': "{{$year}}",
+                        'type': row["0"],
+                        'value': row[field]
+                    },
+                    dataType: 'json',
+                    type: "PUT",
+                    url: url,
+                    headers: {
+                        'X-CSRF-Token': '{{ csrf_token() }}',
+                    },
+                }).done(function (response) {
+                    // If successful
+                    // show a successful message:
+                    toast.success("Cập nhật thành công!");
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    // If fail
+                    toast.error(textStatus + ': ' + errorThrown);
+                });
+            }
         });
     });
 

@@ -20,8 +20,15 @@ class WorkingDaysController extends Controller
         $year = $request->get('year') ?? Carbon::now()->year;
 
         $workingDays = WorkingDay::where('year', $year)->orderBy('month')->get();
+        $daysInMonths = [];
+        $carbon = Carbon::createFromDate($year);
 
-        return view('working_days.index', compact('workingDays', 'year'));
+        for ($i = 1; $i <= 12; $i++) {
+            $daysInMonth = $carbon->month($i)->daysInMonth;
+            $daysInMonths[] = $daysInMonth;
+        }
+
+        return view('working_days.index', compact('workingDays', 'year', 'daysInMonths'));
     }
 
     /**
