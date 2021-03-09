@@ -1,0 +1,72 @@
+.navbar {
+    &.default-layout {
+        font-family: "roboto", sans-serif;
+        background: #fff;
+        transition: background 0.25s ease;
+        -webkit-transition: background 0.25s ease;
+        -moz-transition: background 0.25s ease;
+        -ms-transition: background 0.25s ease;
+
+        .navbar-brand-wrapper {
+            background: #1c45ef;
+            width: 250px;
+            height: 63px;
+            border-bottom: 1px solid white;
+
+            .navbar-brand {
+                color: #ffffff;
+                font-size: 1.5rem;
+                line-height: 48px;
+                margin-right: 0;
+                padding: 0.25rem 0;
+                display: flex;
+            }
+
+            .brand-logo-mini {
+                display: none;
+            }
+        }
+
+        .navbar-menu-wrapper {
+            color: #001737;
+            padding-left: 15px;
+            padding-right: 15px;
+            width: calc(100% - 250px);
+            height: 63px;
+            box-shadow: 0 4px 16px 0 rgb(167 175 183 / 33%);
+
+            .navbar-nav {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .navbar-toggler {
+                border: 0;
+                color: inherit;
+
+                .mdi {
+                    display: inline-block;
+                    font-family: 'Material Icons';
+                    font-size: 24px;
+                    font-style: normal;
+                    font-weight: normal;
+                    text-rendering: auto;
+                    line-height: inherit;
+                    -webkit-font-smoothing: antialiased;
+                    content: "";
+
+                    @media screen and (max-width: 991px) {
+                        &:before {
+                            content: "\e3c7"
+                        }
+                    }
+                }
+            }
+
+        }
+
+
+
+
+    }
+}

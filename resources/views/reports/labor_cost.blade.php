@@ -4,59 +4,63 @@
 @endsection
 @section('main')
 <div class="row">
-    <div class="col-sm-12">
-        <h1 class="display-3"> Biểu đồ tính nhân công</h1>
-
-        <form method="GET" action="{{ route('reports.labor-cost')}}" class="form-horizontal">
-            @method('GET')
-            @csrf
-            <div class="form-group row">
-                <label for="year" class="col-xs-2 col-form-label mr-2">Năm</label>
-                <div class="col-xs-4 mr-2">
-                    <select id="year-selection" class="form-control" id="year" name="year">
-                        @foreach([2021, 2022, 2023] as $item)
-                        <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <label for="department_id" class="col-xs-2 col-form-label mr-2">Bộ phận</label>
-                <div class="col-xs-4">
-                    <select class="form-control" id="department_id" name="department_id">
-                        @foreach($departmentOptions as $item)
-                        <option value="{{ $item['value'] }}" @if ($item['value']===(int) $departmentId) {{ 'selected' }}
-                            @endif>
-                            {{ $item['title'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
+    <div class="col-md-12 grid-margin">
+        <div class="card">
+            <div class="p-4 border-bottom bg-light">
+                <h4 class="card-title mb-0">Biểu đồ tính nhân công</h4>
             </div>
+            <div class="card-body">
+                <form method="GET" action="{{ route('reports.labor-cost')}}" class="form-horizontal">
+                    @method('GET')
+                    @csrf
+                    <div class="form-group row">
+                        <label for="year" class="col-xs-2 col-form-label mr-2">Năm</label>
+                        <div class="col-xs-4 mr-2">
+                            <select id="year-selection" class="form-control" id="year" name="year">
+                                @foreach([2021, 2022, 2023] as $item)
+                                <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-            <div class="form-group row">
-                    <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
-                        <i
-                            class="material-icons">filter_alt</i>
-                        Lọc
-                    </button>
-            </div>
+                        <label for="department_id" class="col-xs-2 col-form-label mr-2">Bộ phận</label>
+                        <div class="col-xs-4">
+                            <select class="form-control" id="department_id" name="department_id">
+                                @foreach($departmentOptions as $item)
+                                <option value="{{ $item['value'] }}" @if ($item['value']===(int) $departmentId) {{ 'selected' }}
+                                    @endif>
+                                    {{ $item['title'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
 
-        </form>
+                    <div class="form-group row">
+                            <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
+                                <i
+                                    class="material-icons">filter_alt</i>
+                                Lọc
+                            </button>
+                    </div>
 
-        <div class="row">
-            <div class="col-sm-12 col-md-6">
-                <div class="chart-container" style="">
-                    <canvas id="number_of_employees"></canvas>
-                </div>
-            </div>
+                </form>
 
-            <div class="col-sm-12 col-md-6">
-                <div class="chart-container" style="">
-                    <canvas id="total_needed_time"></canvas>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="chart-container" style="">
+                            <canvas id="number_of_employees"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6">
+                        <div class="chart-container" style="">
+                            <canvas id="total_needed_time"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 @endsection

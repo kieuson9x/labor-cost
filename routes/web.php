@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'DashboardController@index')->name('dashboard');
 
 Route::namespace('Employee')->prefix('employees')->name('employees.')->group(function () {
     Route::get('/', 'EmployeeController@index')->name('index');
@@ -44,10 +42,10 @@ Route::namespace('Department')->prefix('departments')->name('departments.')->gro
     Route::get('/budget-plans', 'DepartmentBudgetPlanController@index')->name('budget_plans.index');
     Route::put('/budget-plans', 'DepartmentBudgetPlanController@update')->name('budget_plans.update');
 
-    Route::get('/product-plans', 'DepartmentProductPlanController@index')->name('product_plans.index');
-    Route::put('/product-plans', 'DepartmentProductPlanController@update')->name('product_plans.update');
-    Route::get('/product-plans/create', 'DepartmentProductPlanController@create')->name('product_plans.create');
-    Route::post('/product-plans/store', 'DepartmentProductPlanController@store')->name('product_plans.store');
+    Route::get('/{departmentId}/product-plans', 'DepartmentProductPlanController@index')->name('product_plans.index');
+    Route::put('/{departmentId}/product-plans', 'DepartmentProductPlanController@update')->name('product_plans.update');
+    Route::get('/{departmentId}/product-plans/create', 'DepartmentProductPlanController@create')->name('product_plans.create');
+    Route::post('/{departmentId}/product-plans/store', 'DepartmentProductPlanController@store')->name('product_plans.store');
 
     Route::get('/budgets', 'DepartmentBudgetController@index')->name('budgets.index');
     Route::put('/budgets', 'DepartmentBudgetController@update')->name('budgets.update');

@@ -1,77 +1,25 @@
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
-    <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('employees*')) ? 'active' : '' }}" href="/employees">
-                    <i class="material-icons" style="font-size: 13px">people</i>
-                    Nhân viên
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('departments')) ? 'active' : '' }}" href="/departments">
-                    <i class="material-icons" style="font-size: 13px">doorbell</i>
-                    Bộ phận
-                </a>
+<nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+        <a class="navbar-brand brand-logo" href="/">
+            <img src="https://kangaroo.vn/wp-content/uploads/logo-kangaroo.png" alt="logo"> </a>
+        <a class="navbar-brand brand-logo-mini" href="/">
+            <img src="https://kangaroo.vn/wp-content/uploads/favicon.png" alt="logo"> </a>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item mr-3" id="date-time">
+
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('working_days*')) ? 'active' : '' }}" href="/working-days">
-                    <i class="material-icons" style="font-size: 13px">calendar_today</i>
-                    Lịch làm việc năm
-                </a>
-            </li>
-
-            <div class="dropdown-divider"></div>
-
-
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('departments.budget_plans*')) ? 'active' : '' }}"
-                    href="/departments/budget-plans">
-                    <i class="material-icons" style="font-size: 13px">document_scanner</i>
-                    Nhập kế hoạch ngân sách
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('product_plans*')) ? 'active' : '' }}" href="/departments/budgets">
-                    <i class="material-icons" style="font-size: 13px">account_balance</i>
-                    Nhập luỹ kế thực tế
-                </a>
-            </li>
-
-            <div class="dropdown-divider"></div>
-
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('products*')) ? 'active' : '' }}" href="/products">
-                    <i class="material-icons" style="font-size: 13px">production_quantity_limits</i>
-                    Sản phẩm
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('product_plans*')) ? 'active' : '' }}" href="/departments/product-plans">
-                    <i class="material-icons" style="font-size: 13px">document_scanner</i>
-                    Kế hoạch sản xuất sẩn phẩm theo phòng ban
-                </a>
-            </li>
-
-            <div class="dropdown-divider"></div>
-
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('reports.salary*')) ? 'active' : '' }}"
-                    href="/reports/salary">
-                    <i class="material-icons" style="font-size: 13px">bar_chart</i>
-                    Biểu đồ lương
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ (request()->routeIs('reports.labor-cost*')) ? 'active' : '' }}"
-                    href="/reports/labor-cost">
-                    <i class="material-icons" style="font-size: 13px">bar_chart</i>
-                    Biểu đồ tính nhân công
-                </a>
+            <li class="nav-item dropdown d-none d-xl-inline-block user-dropdown">
+                <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown"
+                    aria-expanded="false">
+                    <img class="img-xs rounded-circle" src="/images/avatar.svg" alt="Profile image"> </a>
             </li>
         </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+            data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+        </button>
     </div>
 </nav>

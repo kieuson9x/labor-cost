@@ -1,0 +1,101 @@
+.navbar.fixed-top + .page-body-wrapper {
+    padding-top: 63px;
+}
+
+.page-body-wrapper {
+    min-height: calc(100vh - 63px);
+    display: flex;
+    flex-direction: row;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.main-panel{
+    transition: width 0.25s ease, margin 0.25s ease;
+    width: calc(100% - 250px);
+    min-height: calc(100vh - 63px);
+    display: flex;
+    flex-direction: column;
+
+
+    @media screen and (max-width: 991px) {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.content-wrapper {
+    background: #F3F3F3;
+    padding: 1.5rem 1.7rem;
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* Modal styles */
+.modal .modal-dialog {
+	max-width: 400px;
+}
+.modal .modal-header, .modal .modal-body, .modal .modal-footer {
+	padding: 20px 30px;
+}
+.modal .modal-content {
+	border-radius: 3px;
+	font-size: 14px;
+}
+.modal .modal-footer {
+	background: #ecf0f1;
+	border-radius: 0 0 3px 3px;
+}
+.modal .modal-title {
+	display: inline-block;
+}
+.modal .form-control {
+	border-radius: 2px;
+	box-shadow: none;
+	border-color: #dddddd;
+}
+.modal textarea.form-control {
+	resize: vertical;
+}
+.modal .btn {
+	border-radius: 2px;
+	min-width: 100px;
+}
+.modal form label {
+	font-weight: normal;
+}
+
+
+.card {
+    box-shadow: 0 0 0 0 rgb(90 113 208 / 11%), 0 4px 16px 0 rgb(167 175 183 / 33%);
+    border: solid 1px #dde4eb;
+    border-radius: 0px;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+
+    .card-title {
+        color: #212529;
+        font-family: "roboto", sans-serif;
+        font-weight: 500;
+        margin-bottom: 15px;
+        font-size: 18px;
+        text-transform: capitalize;
+    }
+
+    .card-body {
+        flex: 1 1 auto;
+        min-height: 1px;
+
+        padding: 1.88rem 1.81rem;
+    }
+}
+
+.grid-margin {
+    margin-bottom: 25px;
+}

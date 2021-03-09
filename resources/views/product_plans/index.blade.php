@@ -1,93 +1,97 @@
 @extends('base')
 @section('main')
-<div class="main-content">
-    <h1 class="display-3">Kế hoạch sản xuất theo phòng ban</h1>
-    <form method="GET" action="{{ route('departments.product_plans.index') }}" class="form-horizontal">
-        @method('GET')
-        @csrf
-        <div class="form-group row">
-            <label for="year" class="col-xs-2 col-form-label mr-2">Năm</label>
-            <div class="col-xs-4 mr-2">
-                <select id="year-selection" class="form-control" id="year" name="year">
-                    @foreach([2021, 2022, 2023] as $item)
-                    <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
-                    </option>
-                    @endforeach
-                </select>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="p-4 border-bottom bg-light">
+                <h4 class="card-title mb-0">Kế hoạch sản xuất - Phòng {{str_replace('HY_', '', $departmentTitle)}}</h4>
+            </div>
+            <div class="card-body">
+                <form method="GET"
+                    action="{{ route('departments.product_plans.index', ['departmentId' => $departmentId]) }}"
+                    class="form-horizontal">
+                    @method('GET')
+                    @csrf
+                    <div class="form-group row">
+                        <label for="year" class="col-xs-2 col-form-label mr-2">Năm</label>
+                        <div class="col-xs-4 mr-2">
+                            <select id="year-selection" class="form-control" id="year" name="year">
+                                @foreach([2021, 2022, 2023] as $item)
+                                <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>
+                                    {{ $item }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-xs-4 mr-1">
+                            <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
+                                <i class="material-icons">filter_alt</i>
+                                Lọc
+                            </button>
+                        </div>
+                        <div class="col-xs-4">
+                            <a href="#addProductPlanModal" class="btn btn-success flex items-center justify-center"
+                                data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm/Cập nhật kế hoạch
+                                    mới</span></a>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+
+                    </div>
+                </form>
+
+                <table class="table table-striped" data-toggle="table" id="table_product_plans" data-editable="true">
+                    <thead>
+                        <tr class="tableizer-firstrow">
+                            <th>Mã bộ phận</th>
+                            <th>Mã hàng</th>
+                            <th>Tên hàng</th>
+                            <th data-editable="true">KH tháng 01</th>
+                            <th data-editable="true">KH tháng 02</th>
+                            <th data-editable="true">KH tháng 03</th>
+                            <th data-editable="true">KH tháng 04</th>
+                            <th data-editable="true">KH tháng 05</th>
+                            <th data-editable="true">KH tháng 06</th>
+                            <th data-editable="true">KH tháng 07</th>
+                            <th data-editable="true">KH tháng 08</th>
+                            <th data-editable="true">KH tháng 09</th>
+                            <th data-editable="true">KH tháng 10</th>
+                            <th data-editable="true">KH tháng 11</th>
+                            <th data-editable="true">KH tháng 12</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($productPlans as $productPlan)
+                        <tr>
+                            <td>{{data_get($productPlan->first(), 'department.department_code')}}</td>
+                            <td>{{data_get($productPlan->first(), 'product.product_code')}}</td>
+                            <td>{{data_get($productPlan->first(), 'product.name')}}</td>
+
+
+                            @for ($i = 0; $i < 12; $i++) <td data-halign="center"
+                                id="{{ $productPlan->where('month', $i + 1)->sortBy(['created_at', 'desc'])->first()->id ?? 0 }}">
+                                {{ $productPlan->where('month', $i + 1)->sortBy(['created_at', 'desc'])->first()->quantity ?? 0 }}
+                                </td>
+                                @endfor
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <div class="form-group row">
-            <label for="department_id" class="col-xs-2 col-form-label mr-2">Bộ phận</label>
-            <div class="col-xs-4">
-                <select class="form-control" id="department_id0" name="department_id">
-                    @foreach($departmentOptions as $item)
-                    <option value="{{ $item['value'] }}" @if ($item['value']===(int) $departmentId) {{ 'selected' }}
-                        @endif>
-                        {{ $item['title'] }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-xs-6 mr-1">
-                <button type="submit" class="btn btn-primary mr-1 w-40  flex items-center justify-center">
-                    <i class="material-icons">filter_alt</i>
-                    Lọc
-                </button>
-            </div>
-            <div class="col-xs-6">
-                <a href="#addProductPlanModal" class="btn btn-success flex items-center justify-center"
-                    data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Thêm/Cập nhật kế hoạch mới</span></a>
-            </div>
-        </div>
-    </form>
-
-    <table class="table table-striped" data-toggle="table" id="table_product_plans" data-editable="true">
-        <thead>
-            <tr class="tableizer-firstrow">
-                <th>Mã bộ phận</th>
-                <th>Mã hàng</th>
-                <th>Tên hàng</th>
-                <th data-editable="true">KH tháng 01</th>
-                <th data-editable="true">KH tháng 02</th>
-                <th data-editable="true">KH tháng 03</th>
-                <th data-editable="true">KH tháng 04</th>
-                <th data-editable="true">KH tháng 05</th>
-                <th data-editable="true">KH tháng 06</th>
-                <th data-editable="true">KH tháng 07</th>
-                <th data-editable="true">KH tháng 08</th>
-                <th data-editable="true">KH tháng 09</th>
-                <th data-editable="true">KH tháng 10</th>
-                <th data-editable="true">KH tháng 11</th>
-                <th data-editable="true">KH tháng 12</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($productPlans as $productPlan)
-            <tr>
-                <td>{{data_get($productPlan->first(), 'department.department_code')}}</td>
-                <td>{{data_get($productPlan->first(), 'product.product_code')}}</td>
-                <td>{{data_get($productPlan->first(), 'product.name')}}</td>
-
-
-                @for ($i = 0; $i < 12; $i++) <td data-halign="center" id="{{ $productPlan->where('month', $i + 1)->sortBy(['created_at', 'desc'])->first()->id ?? 0 }}">
-                    {{ $productPlan->where('month', $i + 1)->sortBy(['created_at', 'desc'])->first()->quantity ?? 0 }}
-                    </td>
-                    @endfor
-            </tr>
-            @endforeach
-
-        </tbody>
-    </table>
+    </div>
 </div>
 
 {{-- Thêm mới --}}
 <div id="addProductPlanModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ route('departments.product_plans.store') }}" class="form-horizontal">
+            <form method="POST"
+                action="{{ route('departments.product_plans.store',  ['departmentId' => $departmentId]) }}"
+                class="form-horizontal">
                 @method('POST')
                 @csrf
                 <div class="modal-header">
@@ -117,49 +121,48 @@
                     <div class="form-group row">
                         <label>Tháng</label>
                         <div class="form-group ">
-                            @for($i = 1; $i <=12; $i++)
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="months[]" value="{{$i}}">
-                                    <label class="form-check-label" for="{{"month_${i}"}}">{{"Tháng {$i}"}}</label>
-                                </div>
-                            @endfor
+                            @for($i = 1; $i <=12; $i++) <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="months[]" value="{{$i}}">
+                                <label class="form-check-label" for="{{"month_${i}"}}">{{"Tháng {$i}"}}</label>
                         </div>
+                        @endfor
                     </div>
-                    <div class="form-group row">
-                        <label>Năm</label>
-                            <select id="year-selection" class="form-control" id="year" name="year">
-                                @foreach([2021, 2022, 2023] as $item)
-                                    <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
-                                    </option>
-                                @endforeach
-                            </select>
-                    </div>
-
-                    <div class="form-group row">
-                        <label>Số lượng</label>
-                        <input type="text" class="form-control" name="quantity">
-                    </div>
-
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Thêm</button>
-                    <button type="button" class="btn btn-secondary mr-1" data-dismiss="modal">Huỷ</button>
+                <div class="form-group row">
+                    <label>Năm</label>
+                    <select id="year-selection" class="form-control" id="year" name="year">
+                        @foreach([2021, 2022, 2023] as $item)
+                        <option value="{{ $item }}" @if ($item===(int) $year) {{ 'selected' }} @endif>{{ $item }}
+                        </option>
+                        @endforeach
+                    </select>
                 </div>
+
+                <div class="form-group row">
+                    <label>Số lượng</label>
+                    <input type="text" class="form-control" name="quantity">
+                </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Thêm</button>
+            <button type="button" class="btn btn-secondary mr-1" data-dismiss="modal">Huỷ</button>
         </div>
     </div>
 </div>
 
-</form>
-</div>
-</div>
 @endsection
 
 @section('customScript')
 <script src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
 
 <script>
-
     $(function () {
+        $(`#product_plans`).collapse();
+        var departmentId = {{$departmentId}};
+
+        $(`#product_plans .nav-link[departmentId='${departmentId}']`).parent().addClass('active')
+
         var toast = new Toasty();
         $('#table_product_plans').DataTable({
             responsive: true,
@@ -169,7 +172,8 @@
         });
 
         $('#table_product_plans').on('editable-save.bs.table', function (e, field, row, oldValue) {
-            var url = "{{route('departments.product_plans.update')}}";
+            var url =
+                "{{route('departments.product_plans.update', ['departmentId' => $departmentId])}}";
             const productPlanId = row[`_${field}_id`];
 
             $.ajax({
@@ -204,8 +208,8 @@
 
 @if(session("success"))
 <script type="text/javascript">
-  toastr.success("Cập nhật thành công");
-<script>
-@endif
+    toastr.success("Cập nhật thành công"); <
+    script >
+        @endif
 
-@endsection
+    @endsection

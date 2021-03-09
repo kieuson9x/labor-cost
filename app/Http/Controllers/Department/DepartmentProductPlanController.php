@@ -20,9 +20,8 @@ class DepartmentProductPlanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, int $departmentId)
     {
-        $departmentId = $request->input('department_id', 1);
         $year = $request->get('year') ?? Carbon::now()->year;
 
         $productPlans = ProductPlan::where(['year' => $year, 'department_id' => $departmentId])
@@ -34,9 +33,12 @@ class DepartmentProductPlanController extends Controller
             });
 
         $departmentOptions = Department::getDepartmentOptions();
+        $departmentTitle = collect($departmentOptions)->filter(function ($item) use ($departmentId) {
+            return $item['value'] === $departmentId;
+        })->first()['title'] ?? '-';
         $productOptions = Product::getProductOptions();
 
-        return view('product_plans.index', compact('productPlans', 'year', 'departmentId', 'departmentOptions', 'productOptions'));
+        return view('product_plans.index', compact('productPlans', 'year', 'departmentId', 'departmentTitle', 'departmentOptions', 'productOptions'));
     }
 
     /**
@@ -100,6 +102,6 @@ class DepartmentProductPlanController extends Controller
             );
         }
 
-        return redirect('/departments/product-plans')->with('success', 'Employee saved!');
+        return redirect("/departments/{$request->input('department_id')}/product-plans")->with('success', 'Employee saved!');
     }
 }
