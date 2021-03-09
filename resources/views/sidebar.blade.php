@@ -104,12 +104,12 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link {{ (request()->routeIs('reports.labor-cost*')) ? 'active' : '' }}"
                 href="/reports/labor-cost">
                 <i class="material-icons" style="font-size: 13px">bar_chart</i>
                 Biểu đồ tính nhân công
             </a>
-        </li>
+        </li> --}}
     </ul>
 </nav>

@@ -13,7 +13,7 @@ class Product extends Model
     // Danh sách các phòng ban
     public static function getProductOptions()
     {
-        return Cache::remember('products', 24 * 60, function () {
+        return Cache::remember('products', 5 * 60, function () {
             return DB::table('products')->get()->map(function ($item) {
                 return [
                     'title' => $item->name,

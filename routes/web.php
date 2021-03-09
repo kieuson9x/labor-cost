@@ -44,6 +44,8 @@ Route::namespace('Department')->prefix('departments')->name('departments.')->gro
 
     Route::get('/{departmentId}/product-plans', 'DepartmentProductPlanController@index')->name('product_plans.index');
     Route::put('/{departmentId}/product-plans', 'DepartmentProductPlanController@update')->name('product_plans.update');
+    Route::get('/{departmentId}/product-plans/getLaborCostData', 'DepartmentProductPlanController@getLaborCostData')->name('product_plans.getLaborCostData');
+
     Route::get('/{departmentId}/product-plans/create', 'DepartmentProductPlanController@create')->name('product_plans.create');
     Route::post('/{departmentId}/product-plans/store', 'DepartmentProductPlanController@store')->name('product_plans.store');
 

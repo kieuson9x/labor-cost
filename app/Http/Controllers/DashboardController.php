@@ -21,7 +21,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $year = $request->get('year') ?? Carbon::now()->year;
+        $year = (int) $request->get('year') ?? Carbon::now()->year;
 
         $departmentOptions = Department::getDepartmentOptions();
         $dashboardData = array();
@@ -66,13 +66,15 @@ class DashboardController extends Controller
                     'is_overload' => $employeeNeeded > $numberOfEmployee,
                     'needed' => $employeeNeeded
                 ];
-
-                Log::info($actualBudget);
             }
 
-            if (data_get($overallData, 'total.actual', 0) > data_get($overallData, 'total.plan', 0)) {
+
+            $totalOverallActual = (int) data_get($overallData, 'total.actual', 0);
+            $totalOverallPlan = (int) data_get($overallData, 'total.plan', 0);
+
+            if ($totalOverallActual > $totalOverallPlan) {
                 data_set($overallData, 'total', false);
-            } else {
+            } else if ($totalOverallActual === 0 && $totalOverallPlan === 0) {
                 data_set($overallData, 'total', true);
             }
 

@@ -1,7 +1,7 @@
 @extends('base')
 @section('main')
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6 grid-margin">
         <div class="card">
             <div class="p-4 border-bottom bg-light">
                 <h4 class="card-title mb-0">Kế hoạch sản xuất - Phòng {{str_replace('HY_', '', $departmentTitle)}}</h4>
@@ -66,7 +66,7 @@
                         @foreach ($productPlans as $productPlan)
                         <tr>
                             <td>{{data_get($productPlan->first(), 'department.department_code')}}</td>
-                            <td>{{data_get($productPlan->first(), 'product.product_code')}}</td>
+                            <td><a href="/products/edit/{{data_get($productPlan->first(), 'product.id')}}">{{data_get($productPlan->first(), 'product.product_code')}}</a></td>
                             <td>{{data_get($productPlan->first(), 'product.name')}}</td>
 
 
@@ -80,6 +80,29 @@
 
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 grid-margin">
+        <div class="card">
+            <div class="p-4 border-bottom bg-light">
+                <h4 class="card-title mb-0">Biểu đồ tính nhân công</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="chart-container" style="">
+                            <canvas id="number_of_employees"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-md-12">
+                        <div class="chart-container" style="">
+                            <canvas id="total_needed_time"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -155,7 +178,7 @@
 
 @section('customScript')
 <script src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script>
     $(function () {
         $(`#product_plans`).collapse();
@@ -171,6 +194,16 @@
             }
         });
 
+
+
+        $("select[name*='months']").selectpicker();
+
+        var numberOfEmployeeData = {!!json_encode($numberOfEmployeeData) !!};
+        var totalNeededTimeData= {!!json_encode($totalNeededTimeData) !!};
+        var totalNeededEmployeeData= {!!json_encode($totalNeededEmployeeData) !!};
+
+        renderChart(numberOfEmployeeData, totalNeededTimeData, totalNeededEmployeeData);
+
         $('#table_product_plans').on('editable-save.bs.table', function (e, field, row, oldValue) {
             var url =
                 "{{route('departments.product_plans.update', ['departmentId' => $departmentId])}}";
@@ -182,7 +215,7 @@
                     'month': field - 2,
                     'year': "{{$year}}",
                     'product_plan_id': productPlanId,
-                    'value': row[field]
+                    'value': row[field],
                 },
                 dataType: 'json',
                 type: "PUT",
@@ -191,6 +224,7 @@
                     'X-CSRF-Token': '{{ csrf_token() }}',
                 },
             }).done(function (response) {
+                renderChart(response['numberOfEmployeeData'], response['totalNeededTimeData'], response['totalNeededEmployeeData']);
                 // If successful
                 // show a successful message:
                 toast.success("Cập nhật thành công!");
@@ -199,10 +233,76 @@
                 toast.error(textStatus + ': ' + errorThrown);
             });
         });
-
-        $("select[name*='months']").selectpicker();
-
     });
+
+    function renderChart(numberOfEmployeeData, totalNeededTimeData, totalNeededEmployeeData) {
+        var numberOfEmployeeCtx = document.getElementById('number_of_employees');
+        var totalNeededTimeCtx = document.getElementById('total_needed_time');
+
+        var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
+            'Tháng 8',
+            'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+        ];
+
+        var numberOfEmployeeChartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Số nhân công hiện có',
+                backgroundColor: 'red',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: labels.map(item => {
+                    return numberOfEmployeeData[item] === 0 ? 0.1 : Math.round(numberOfEmployeeData[item]);
+                })
+            },
+            {
+                label: 'Số nhân công cần',
+                backgroundColor: 'blue',
+                borderColor: 'white',
+                borderWidth: 1,
+                data: labels.map(item => {
+                    return totalNeededEmployeeData[item] === 0 ? 0.1 : Math.round(totalNeededEmployeeData[item]);
+                })
+            }
+            ]
+        };
+
+
+        var totalNeededTimeChartData = {
+            labels: labels,
+            datasets: [{
+                labels: labels,
+                backgroundColor: ["red", "blue", "green", "cyan", "yellow", "purple", "brown", "grey", "pink", "orange", "teal", "olive"],
+                borderColor: 'white',
+                borderWidth: 1,
+                data: labels.map(item => {
+                    return totalNeededTimeData[item] === 0 ? 0.1 : Math.round(totalNeededTimeData[item]);
+                })
+            }]
+        };
+
+        var numberOfEmployeeChart = new Chart(numberOfEmployeeCtx, {
+            type: 'bar',
+            data: numberOfEmployeeChartData,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Biểu đồ so sánh số nhân công và số nhân công cần trong tháng'
+                }
+            }
+        });
+
+        var totalNeededTimeChart = new Chart(totalNeededTimeCtx, {
+            type: 'pie',
+            data: totalNeededTimeChartData,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Biểu đồ tổng thời gian để làm sản phẩm theo kế hoạch đã có'
+                }
+            }
+        });
+    }
 
 </script>
 
