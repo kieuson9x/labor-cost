@@ -76,4 +76,14 @@ class Department extends Model
             })->toArray();
         });
     }
+
+    public function getNumberOfEmployees($date)
+    {
+        return Cache::remember('number_of_employees', 24 * 60, function () use ($date) {
+            return $this->employees()->whereHas('histories', function ($query) use ($date) {
+                return $query->where('start_date', '<=', $date)
+                    ->where('end_date', '>=', $date);
+            })->count();
+        });
+    }
 }

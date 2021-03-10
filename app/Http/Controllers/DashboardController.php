@@ -21,7 +21,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $year = (int) $request->get('year') ?? Carbon::now()->year;
+        $year = (int) ($request->get('year') ?? Carbon::now()->year);
 
         $departmentOptions = Department::getDepartmentOptions();
         $dashboardData = array();
@@ -44,10 +44,7 @@ class DashboardController extends Controller
                 $compareActualBudget = (int) $actualBudgetByAccounting === 0 ? $actualBudget : $actualBudgetByAccounting;
 
                 $date = Carbon::createFromDate($year, $i)->startOfMonth();
-                $numberOfEmployee = $department->employees()->whereHas('histories', function ($query) use ($date) {
-                    return $query->where('start_date', '<=', $date)
-                        ->where('end_date', '>=', $date);
-                })->count();
+                $numberOfEmployees = $department->getNumberOfEmployees($date);
                 $sum = 0;
                 $productPlanTime = $department->productPlans()->where('month', $i)->where('year', $year)->each(function ($item) use (&$sum) {
                     $sum += $item->product->rate * $item->quantity;
@@ -63,11 +60,10 @@ class DashboardController extends Controller
                 $overallData[$i] = $compareActualBudget > $budgetPlan ? false : true;
                 $salaryCostData[$i] = $actualBudget;
                 $employeeData[$i] = [
-                    'is_overload' => $employeeNeeded > $numberOfEmployee,
+                    'is_overload' => $employeeNeeded > $numberOfEmployees,
                     'needed' => $employeeNeeded
                 ];
             }
-
 
             $totalOverallActual = (int) data_get($overallData, 'total.actual', 0);
             $totalOverallPlan = (int) data_get($overallData, 'total.plan', 0);
@@ -77,6 +73,7 @@ class DashboardController extends Controller
             } else if ($totalOverallActual === 0 && $totalOverallPlan === 0) {
                 data_set($overallData, 'total', true);
             }
+
 
             data_set($dashboardData, "overall." . $department->id, $overallData);
             data_set($dashboardData, "salary_cost." . $department->id, $salaryCostData);
