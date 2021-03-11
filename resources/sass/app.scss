@@ -27,6 +27,13 @@ body {
     max-height: 500px;
     max-width: 100%;
 
+    min-height: 300px;
+
+    canvas {
+        height: calc(100%)!important;
+    }
+
+
     #myChart {}
 }
 
@@ -59,13 +66,22 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-#table_dashboard_overall, #table_dashboard_employee_needed {
+.dataTables_wrapper {
+    overflow-x:auto;
+}
+#table_dashboard_overall, #table_dashboard_employee_needed, #table_department {
     tr {
         td {
             &.overload {
                 color:white;
                 background:#f32c22;
             }
+
+            &:not(:first-child){
+                &.not-editable {
+                background:#bbbbbb;
+            }
+        }
 
                 // color:white;
                 // background:#7bb526;

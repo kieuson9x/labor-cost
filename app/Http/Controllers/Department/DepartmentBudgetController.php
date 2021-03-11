@@ -19,7 +19,7 @@ class DepartmentBudgetController extends Controller
      */
     public function index(Request $request)
     {
-        $year = $request->get('year') ?? Carbon::now()->year;
+        $year = (int) ($request->get('year') ?? Carbon::now()->year);
 
         $budgets = Budget::where(['year' => $year])->orderBy('month')->get();;
 

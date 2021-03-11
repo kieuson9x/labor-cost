@@ -103,7 +103,6 @@
             ]
         };
 
-
         var totalNeededTimeChartData = {
             labels: labels,
             datasets: [{
@@ -124,17 +123,6 @@
                 title: {
                     display: true,
                     text: 'Biểu đồ so sánh số nhân công và số nhân công cần trong tháng'
-                }
-            }
-        });
-
-        var totalNeededTimeChart = new Chart(totalNeededTimeCtx, {
-            type: 'pie',
-            data: totalNeededTimeChartData,
-            options: {
-                title: {
-                    display: true,
-                    text: 'Biểu đồ tổng thời gian để làm sản phẩm theo kế hoạch đã có'
                 }
             }
         });

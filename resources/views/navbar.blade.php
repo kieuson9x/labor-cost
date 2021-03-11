@@ -6,20 +6,20 @@
             <img src="https://kangaroo.vn/wp-content/uploads/favicon.png" alt="logo"> </a>
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item mr-3" id="date-time">
-
-            </li>
-
-            <li class="nav-item dropdown d-none d-xl-inline-block user-dropdown">
+        <ul class="navbar-nav">
+            <button class="navbar-toggler" type="button"
+            data-toggle="offcanvas">
+            <i class="material-icons" style="font-size: 18px">reorder</i>
+        </button>
+            <li class="nav-item dropdown d-none d-xl-inline-block user-dropdown ml-auto">
                 <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown"
                     aria-expanded="false">
                     <img class="img-xs rounded-circle" src="/images/avatar.svg" alt="Profile image"> </a>
             </li>
         </ul>
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+        {{-- <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
             data-toggle="offcanvas">
             <span class="mdi mdi-menu"></span>
-        </button>
+        </button> --}}
     </div>
 </nav>

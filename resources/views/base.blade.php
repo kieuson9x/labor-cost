@@ -12,7 +12,7 @@
         href="https://cdn.jsdelivr.net/gh/Talv/x-editable@develop/dist/bootstrap4-editable/css/bootstrap-editable.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"  type="text/css">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -29,9 +29,9 @@
 
         {{-- Main  --}}
         <div class="main-panel">
-          <div class="content-wrapper">
-            @yield('main')
-          </div>
+            <div class="content-wrapper">
+                @yield('main')
+            </div>
         </div>
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
@@ -46,35 +46,36 @@
     <script src="{{ asset('js/toasty.min.js') }}"></script>
     <script>
         $(function () {
-            var interval = setInterval(function () {
-                if (!dayjs) {
-                    clearInterval(interval);
-                }
+            // var interval = setInterval(function () {
+            //     if (!dayjs) {
+            //         clearInterval(interval);
+            //     }
 
-                $('#date-time').html(dayjs().format('DD/MM/YYYY --- HH:mm:ss'));
-            }, 1000);
-
-            $('.navbar-toggler').on('click', function () {
-                $('#sidebar').toggleClass('active');
-            });
+            //     $('#date-time').html(dayjs().format('DD/MM/YYYY --- HH:mm:ss'));
+            // }, 1000);
 
             if (window.matchMedia('(max-width: 991px)').matches) {
-                console.log("Add");
+                $('.navbar-toggler').on('click', function () {
+                    $('#sidebar').toggleClass('active');
+                    $('.main-panel').toggleClass('full-panel');
+                });
                 $('.sidebar').addClass('sidebar-offcanvas');
             } else {
                 $('.sidebar').removeClass('sidebar-offcanvas');
+                $('.navbar-toggler').on('click', function () {
+                    $('#sidebar').toggleClass('hidden');
+                    $('.main-panel').toggleClass('full-panel');
+                });
             }
         })
 
-        $(window).resize(function() {
+        $(window).resize(function () {
             if (window.matchMedia('(max-width: 991px)').matches) {
                 $('.sidebar').addClass('sidebar-offcanvas');
             } else {
                 $('.sidebar').removeClass('sidebar-offcanvas');
             }
         });
-
-
 
     </script>
     @yield('customScript')

@@ -194,8 +194,6 @@
             }
         });
 
-
-
         $("select[name*='months']").selectpicker();
 
         var numberOfEmployeeData = {!!json_encode($numberOfEmployeeData) !!};
@@ -291,25 +289,14 @@
                 }
             }
         });
-
-        var totalNeededTimeChart = new Chart(totalNeededTimeCtx, {
-            type: 'pie',
-            data: totalNeededTimeChartData,
-            options: {
-                title: {
-                    display: true,
-                    text: 'Biểu đồ tổng thời gian để làm sản phẩm theo kế hoạch đã có'
-                }
-            }
-        });
     }
 
 </script>
 
 @if(session("success"))
 <script type="text/javascript">
-    toastr.success("Cập nhật thành công"); <
-    script >
+    toastr.success("Cập nhật thành công");
+    <script >
         @endif
 
     @endsection

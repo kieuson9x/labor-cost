@@ -53,6 +53,10 @@ Route::namespace('Department')->prefix('departments')->name('departments.')->gro
     Route::put('/budgets', 'DepartmentBudgetController@update')->name('budgets.update');
     Route::get('/budgets/create', 'DepartmentBudgetController@create')->name('budgets.create');
     Route::post('/budgets/store', 'DepartmentBudgetController@store')->name('budgets.store');
+
+    Route::get('/{departmentId}', 'DepartmentController@show')->name('show');
+    Route::put('/{departmentId}/update', 'DepartmentController@update')->name('update');
+    Route::put('/{departmentId}/getBudgetData', 'DepartmentController@getBudgetData')->name('getBudgetData');
 });
 
 Route::namespace('Product')->prefix('products')->name('products.')->group(function () {
