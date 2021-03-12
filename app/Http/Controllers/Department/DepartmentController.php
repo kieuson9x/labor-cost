@@ -34,18 +34,22 @@ class DepartmentController extends Controller
         $departmentEmployees = $department->data();
 
         $budgetData = $this->getBudgetData($year, $departmentId);
+        $laborCostData =  $this->getLaborData($year, $departmentId);
 
-        return view('departments.show', compact('departmentId', 'year', 'department', 'departmentEmployees', 'budgetData'));
+        return view('departments.show', compact('departmentId', 'year', 'department', 'departmentEmployees', 'budgetData', 'laborCostData'));
     }
 
     public function getBudgetData($year, $departmentId)
     {
         $department = Department::findOrFail($departmentId);
         $budgetData = array();
+
         $budgetData['Tổng'] = [
             'Luỹ kế theo kế hoạch' => 0,
             'Luỹ kế lương theo kế hoạch sản xuất' => 0,
-            'Chi phí thực tế ERP' => 0
+            'Chi phí thực tế ERP' => 0,
+            'Luỹ kế so sánh' => 0,
+            'Vượt' => 0,
         ];
 
         for ($i = 1; $i <= 12; $i++) {
@@ -60,15 +64,42 @@ class DepartmentController extends Controller
             $budgetData['Tổng']['Luỹ kế theo kế hoạch'] += $budgetPlan;
             $budgetData['Tổng']['Luỹ kế lương theo kế hoạch sản xuất'] += $actualBudget;
             $budgetData['Tổng']['Chi phí thực tế ERP'] += $budgetByAccounting;
+            $comparableBudget = $budgetByAccounting ? $budgetByAccounting : $actualBudget;
+            $budgetData['Tổng']['Luỹ kế so sánh'] += $comparableBudget;
+
 
             $budgetData["Tháng {$i}"] = [
                 'Luỹ kế theo kế hoạch' => $budgetPlan,
                 'Luỹ kế lương theo kế hoạch sản xuất' => $actualBudget,
-                'Chi phí thực tế ERP' => $budgetByAccounting
+                'Chi phí thực tế ERP' => $budgetByAccounting,
+                'Luỹ kế so sánh' => $comparableBudget,
+                'Vượt' => $comparableBudget > $budgetPlan,
             ];
         }
 
+        data_set($budgetData, 'Tổng.Vượt', data_get($budgetData, 'Tổng.Luỹ kế so sánh') > data_get($budgetData, 'Tổng.Luỹ kế theo kế hoạch'));
+
         return $budgetData;
+    }
+
+    public function getLaborData($year, $departmentId)
+    {
+        $department = Department::findOrFail($departmentId);
+        $laborCostData = array();
+
+        for ($i = 1; $i <= 12; $i++) {
+            $condition = ['year' => $year, 'month' => $i];
+            $totalEmployeesNeeded = $department->getTotalNeededEmployeeByPlan($condition);
+            $totalEmployees = $department->getTotalEmployees($condition);
+
+            $laborCostData["Tháng {$i}"] = [
+                'Số nhân công có' => $totalEmployees,
+                'Số nhân công cần' => $totalEmployeesNeeded,
+                'Vượt' => round($totalEmployeesNeeded) > round($totalEmployees)
+            ];
+        }
+
+        return $laborCostData;
     }
 
     /**

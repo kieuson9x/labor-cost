@@ -69,12 +69,17 @@ body {
 .dataTables_wrapper {
     overflow-x:auto;
 }
-#table_dashboard_overall, #table_dashboard_employee_needed, #table_department {
+#table_dashboard_overall, #table_dashboard_employee_needed, #table_department, #table_department_report {
     tr {
         td {
             &.overload {
                 color:white;
                 background:#f32c22;
+            }
+
+            &.normal-green {
+                color:white;
+                background:#5aa469;
             }
 
             &:not(:first-child){

@@ -104,6 +104,22 @@ class Department extends Model
         return $sum;
     }
 
+    public function getTotalEmployees($condition)
+    {
+        return data_get($this->data()->where($condition)->first(), 'number_of_employees', 0);
+    }
+
+    public function getTotalNeededEmployeeByPlan($condition, $totalTimeNeededTime = null)
+    {
+        $workingDays = data_get($this->data()->where($condition)->first(), 'working_days', 22);
+
+        if (is_null($totalTimeNeededTime)) {
+            $totalTimeNeededTime = $this->getTotalNeededTimeByPlan($condition);
+        }
+
+        return $totalTimeNeededTime / (8 * $workingDays);
+    }
+
     public function getActualEmployeeCost($condition, $totalNeedTimeByProductPlan)
     {
         $metaData = $this->data()->where($condition)->first();

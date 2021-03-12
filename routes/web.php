@@ -56,7 +56,8 @@ Route::namespace('Department')->prefix('departments')->name('departments.')->gro
 
     Route::get('/{departmentId}', 'DepartmentController@show')->name('show');
     Route::put('/{departmentId}/update', 'DepartmentController@update')->name('update');
-    Route::put('/{departmentId}/getBudgetData', 'DepartmentController@getBudgetData')->name('getBudgetData');
+    Route::get('/{departmentId}/getBudgetData', 'DepartmentController@getBudgetData')->name('getBudgetData');
+    Route::get('/{departmentId}/getLaborData', 'DepartmentController@getLaborData')->name('getLaborData');
 });
 
 Route::namespace('Product')->prefix('products')->name('products.')->group(function () {
