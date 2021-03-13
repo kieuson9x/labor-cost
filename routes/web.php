@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'DashboardController@index')->name('dashboard');
+Route::put('/product-plans/{productPlanId}', 'DashboardController@update')->name('dashboard.product_plan.update');
+Route::post('/product-plans', 'DashboardController@store')->name('dashboard.product_plan.store');
 
 Route::namespace('Employee')->prefix('employees')->name('employees.')->group(function () {
     Route::get('/', 'EmployeeController@index')->name('index');

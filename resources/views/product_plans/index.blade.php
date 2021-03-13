@@ -85,21 +85,148 @@
     </div>
 
     <div class="col-md-6 grid-margin">
-        <div class="card">
-            <div class="p-4 border-bottom bg-light">
-                <h4 class="card-title mb-0">Biểu đồ tính nhân công</h4>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="chart-container" style="">
-                            <canvas id="number_of_employees"></canvas>
+        <div class="row">
+            <div class="col-md-12 grid-margin">
+                <div class="card">
+                    <div class="p-4 border-bottom bg-light">
+                        <h4 class="card-title mb-0">Bảng đánh giá chi phí</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <table class="table table-striped" id="table_department_report_cost">
+                                <thead>
+                                    <tr class="tableizer-firstrow">
+                                        <th class="no-sort">Nội dung</th>
+                                        <th>Tổng</th>
+                                        <th>Tháng 1</th>
+                                        <th>Tháng 2</th>
+                                        <th>Tháng 3</th>
+                                        <th>Tháng 4</th>
+                                        <th>Tháng 5</th>
+                                        <th>Tháng 6</th>
+                                        <th>Tháng 7</th>
+                                        <th>Tháng 8</th>
+                                        <th>Tháng 9</th>
+                                        <th>Tháng 10</th>
+                                        <th>Tháng 11</th>
+                                        <th>Tháng 12</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Luỹ kế theo kế hoạch</td>
+                                        <td>{{number_to_VND(data_get($budgetData, "Tổng.Luỹ kế theo kế hoạch", 0))}}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left">
+                                            {{ number_to_VND(data_get($budgetData, "Tháng {$i}.Luỹ kế theo kế hoạch", 0)) }}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                    <tr>
+                                        <td>Luỹ kế lương theo kế hoạch sản xuất</td>
+                                        <td>{{number_to_VND(data_get($budgetData, "Tổng.Luỹ kế lương theo kế hoạch sản xuất", 0))}}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left">
+                                            {{ number_to_VND(data_get($budgetData, "Tháng {$i}.Luỹ kế lương theo kế hoạch sản xuất", 0)) }}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                    <tr>
+                                        <td>Chi phí thực tế ERP</td>
+                                        <td>{{number_to_VND(data_get($budgetData, "Tổng.Chi phí thực tế ERP", 0))}}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left">
+                                            {{ number_to_VND(data_get($budgetData, "Tháng {$i}.Chi phí thực tế ERP")) }}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                    <tr>
+                                        <td>Kết quả</td>
+                                        <td class="{{data_get($budgetData, "Tổng.Vượt") ? 'overload' : 'normal-green'}}">{{ data_get($budgetData, "Tổng.Vượt") ? "Vượt" : "OK" }}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left" class="{{data_get($budgetData, "Tháng {$i}.Vượt") ? 'overload' : 'normal-green'}}">
+                                            {{ data_get($budgetData, "Tháng {$i}.Vượt") ? "Vượt" : "OK" }}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                </tbody>
+                            </table>
+                            {{-- <div class="col-sm-12 col-md-5">
+                                <div class="chart-container" style="">
+                                    <canvas id="total_chart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-7">
+                                <div class="chart-container" style="">
+                                    <canvas id="monthly_chart"></canvas>
+                                </div>
+                            </div> --}}
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-12 grid-margin">
+                <div class="card">
+                    <div class="p-4 border-bottom bg-light">
+                        <h4 class="card-title mb-0">Bảng đánh giá nhân công</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <table class="table table-striped" id="table_department_report_employee">
+                                <thead>
+                                    <tr class="tableizer-firstrow">
+                                        <th class="no-sort">Nội dung</th>
+                                        <th>Tổng</th>
+                                        <th>Tháng 1</th>
+                                        <th>Tháng 2</th>
+                                        <th>Tháng 3</th>
+                                        <th>Tháng 4</th>
+                                        <th>Tháng 5</th>
+                                        <th>Tháng 6</th>
+                                        <th>Tháng 7</th>
+                                        <th>Tháng 8</th>
+                                        <th>Tháng 9</th>
+                                        <th>Tháng 10</th>
+                                        <th>Tháng 11</th>
+                                        <th>Tháng 12</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Số nhân công có</td>
+                                        <td>{{data_get($laborCostData, "Tổng.Số nhân công có", 0)}}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left">
+                                            {{ data_get($laborCostData, "Tháng {$i}.Số nhân công có", 0) }}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                    <tr>
+                                        <td>Số nhân công cần</td>
+                                        <td>{{round(data_get($laborCostData, "Tổng.Số nhân công cần", 0))}}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left">
+                                            {{ round(data_get($laborCostData, "Tháng {$i}.Số nhân công cần", 0)) }}
+                                            </td>
+                                            @endfor
+                                    </tr>
 
-                    <div class="col-sm-12 col-md-12">
-                        <div class="chart-container" style="">
-                            <canvas id="total_needed_time"></canvas>
+                                    <tr>
+                                        <td>Kết quả</td>
+                                        <td class="{{data_get($laborCostData, "Tổng.Vượt") ? 'overload' : 'normal-green'}}">{{data_get($laborCostData, "Tổng.Vượt") ? 'Vượt' : 'OK'}}</td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" data-align="left" class="{{data_get($laborCostData, "Tháng {$i}.Vượt") ? 'overload' : 'normal-green'}}">
+                                            {{ data_get($laborCostData, "Tháng {$i}.Vượt") ? 'Vượt' : 'OK' }}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                </tbody>
+                            </table>
+                            {{-- <div class="col-sm-12 col-md-5">
+                                <div class="chart-container" style="">
+                                    <canvas id="total_chart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-7">
+                                <div class="chart-container" style="">
+                                    <canvas id="monthly_chart"></canvas>
+                                </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -187,20 +314,26 @@
         $(`#product_plans .nav-link[departmentId='${departmentId}']`).parent().addClass('active')
 
         var toast = new Toasty();
-        $('#table_product_plans').DataTable({
+
+        $('#table_department').DataTable({
             responsive: true,
-            "language": {
-                "zeroRecords": "Không có sản phẩm nào được đăng ký cho bộ phận này!",
-            }
+            ordering: false,
+        });
+
+        $('#table_department_report_cost, #table_department_report_employee').DataTable({
+            responsive: true,
+            paging: false,
+            ordering: false,
+            searching: false,
+            info: false
         });
 
         $("select[name*='months']").selectpicker();
 
-        var numberOfEmployeeData = {!!json_encode($numberOfEmployeeData) !!};
-        var totalNeededTimeData= {!!json_encode($totalNeededTimeData) !!};
-        var totalNeededEmployeeData= {!!json_encode($totalNeededEmployeeData) !!};
+        var budgetData = {!!json_encode($budgetData) !!};
+        var laborCostData = {!!json_encode($laborCostData) !!};
 
-        renderChart(numberOfEmployeeData, totalNeededTimeData, totalNeededEmployeeData);
+        // renderChart(numberOfEmployeeData, totalNeededTimeData, totalNeededEmployeeData);
 
         $('#table_product_plans').on('editable-save.bs.table', function (e, field, row, oldValue) {
             var url =
@@ -222,7 +355,8 @@
                     'X-CSRF-Token': '{{ csrf_token() }}',
                 },
             }).done(function (response) {
-                renderChart(response['numberOfEmployeeData'], response['totalNeededTimeData'], response['totalNeededEmployeeData']);
+                location.reload();
+                // renderChart(rfgesponse['numberOfEmployeeData'], response['totalNeededTimeData'], response['totalNeededEmployeeData']);
                 // If successful
                 // show a successful message:
                 toast.success("Cập nhật thành công!");
@@ -233,63 +367,63 @@
         });
     });
 
-    function renderChart(numberOfEmployeeData, totalNeededTimeData, totalNeededEmployeeData) {
-        var numberOfEmployeeCtx = document.getElementById('number_of_employees');
-        var totalNeededTimeCtx = document.getElementById('total_needed_time');
+    // function renderChart(numberOfEmployeeData, totalNeededTimeData, totalNeededEmployeeData) {
+    //     var numberOfEmployeeCtx = document.getElementById('number_of_employees');
+    //     var totalNeededTimeCtx = document.getElementById('total_needed_time');
 
-        var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
-            'Tháng 8',
-            'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
-        ];
+    //     var labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7',
+    //         'Tháng 8',
+    //         'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+    //     ];
 
-        var numberOfEmployeeChartData = {
-            labels: labels,
-            datasets: [{
-                label: 'Số nhân công hiện có',
-                backgroundColor: 'red',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: labels.map(item => {
-                    return numberOfEmployeeData[item] === 0 ? 0.1 : Math.round(numberOfEmployeeData[item]);
-                })
-            },
-            {
-                label: 'Số nhân công cần',
-                backgroundColor: 'blue',
-                borderColor: 'white',
-                borderWidth: 1,
-                data: labels.map(item => {
-                    return totalNeededEmployeeData[item] === 0 ? 0.1 : Math.round(totalNeededEmployeeData[item]);
-                })
-            }
-            ]
-        };
+    //     var numberOfEmployeeChartData = {
+    //         labels: labels,
+    //         datasets: [{
+    //             label: 'Số nhân công hiện có',
+    //             backgroundColor: 'red',
+    //             borderColor: 'white',
+    //             borderWidth: 1,
+    //             data: labels.map(item => {
+    //                 return numberOfEmployeeData[item] === 0 ? 0.1 : Math.round(numberOfEmployeeData[item]);
+    //             })
+    //         },
+    //         {
+    //             label: 'Số nhân công cần',
+    //             backgroundColor: 'blue',
+    //             borderColor: 'white',
+    //             borderWidth: 1,
+    //             data: labels.map(item => {
+    //                 return totalNeededEmployeeData[item] === 0 ? 0.1 : Math.round(totalNeededEmployeeData[item]);
+    //             })
+    //         }
+    //         ]
+    //     };
 
 
-        var totalNeededTimeChartData = {
-            labels: labels,
-            datasets: [{
-                labels: labels,
-                backgroundColor: ["red", "blue", "green", "cyan", "yellow", "purple", "brown", "grey", "pink", "orange", "teal", "olive"],
-                borderColor: 'white',
-                borderWidth: 1,
-                data: labels.map(item => {
-                    return totalNeededTimeData[item] === 0 ? 0.1 : Math.round(totalNeededTimeData[item]);
-                })
-            }]
-        };
+    //     var totalNeededTimeChartData = {
+    //         labels: labels,
+    //         datasets: [{
+    //             labels: labels,
+    //             backgroundColor: ["red", "blue", "green", "cyan", "yellow", "purple", "brown", "grey", "pink", "orange", "teal", "olive"],
+    //             borderColor: 'white',
+    //             borderWidth: 1,
+    //             data: labels.map(item => {
+    //                 return totalNeededTimeData[item] === 0 ? 0.1 : Math.round(totalNeededTimeData[item]);
+    //             })
+    //         }]
+    //     };
 
-        var numberOfEmployeeChart = new Chart(numberOfEmployeeCtx, {
-            type: 'bar',
-            data: numberOfEmployeeChartData,
-            options: {
-                title: {
-                    display: true,
-                    text: 'Biểu đồ so sánh số nhân công và số nhân công cần trong tháng'
-                }
-            }
-        });
-    }
+    //     var numberOfEmployeeChart = new Chart(numberOfEmployeeCtx, {
+    //         type: 'bar',
+    //         data: numberOfEmployeeChartData,
+    //         options: {
+    //             title: {
+    //                 display: true,
+    //                 text: 'Biểu đồ so sánh số nhân công và số nhân công cần trong tháng'
+    //             }
+    //         }
+    //     });
+    // }
 
 </script>
 

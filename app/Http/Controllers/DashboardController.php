@@ -6,11 +6,13 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Modules\Product\Models\Product;
 use App\Modules\Employee\Models\Employee;
 use App\Modules\Employee\Models\Overtime;
 use App\Modules\Department\Models\BudgetPlan;
 use App\Modules\Department\Models\Department;
 use App\Modules\WorkingDay\Models\WorkingDay;
+use App\Modules\Department\Models\ProductPlan;
 
 class DashboardController extends Controller
 {
@@ -22,66 +24,26 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $year = (int) ($request->get('year') ?? Carbon::now()->year);
-
         $departmentOptions = Department::getDepartmentOptions();
-        $dashboardData = array();
-        $dashboardData['overall'] = [];
-        $dashboardData['salary_cost'] = [];
-        $dashboardData['employee_needed'] = [];
 
-        // Tổng quan lương
-        foreach ($departmentOptions as $option) {
-            $department = Department::find($option['value']);
+        $data = array();
 
-            $overallData = array();
-            $salaryCostData = array();
-            $employeeData = array();
+        $productPlans = ProductPlan::where(['year' => $year])
+            ->select('product_id')
+            ->groupBy('product_id')
+            ->get()
+            ->map(function ($item) use ($year) {
+                return ProductPlan::where(['product_id' => $item->product_id, 'year' => $year])->latest()->get();
+            });
 
-            for ($i = 1; $i <= 12; $i++) {
-                $budgetPlan = (float) data_get($department->getBudgetPlan($year, $i), 'amount');
-                $actualBudget = (float) $department->getTotalSalariesOfDepartment($year, $i);
-                $actualBudgetByAccounting = (float) data_get($department->budgets()->where(['year' => $year, 'month' => $i])->latest()->first(), 'amount');
-                $compareActualBudget = (int) $actualBudgetByAccounting === 0 ? $actualBudget : $actualBudgetByAccounting;
+        $productOptions = Product::getProductOptions();
+        $budgetData = $this->getBudgetData($year);
+        $laborCostData = $this->getLaborCostData($year);
 
-                $date = Carbon::createFromDate($year, $i)->startOfMonth();
-                $numberOfEmployees = $department->getNumberOfEmployees($date);
-                $sum = 0;
-                $productPlanTime = $department->productPlans()->where('month', $i)->where('year', $year)->each(function ($item) use (&$sum) {
-                    $sum += $item->product->rate * $item->quantity;
-                });
-                $workingDays = WorkingDay::where(['month' => $i, 'year' => $year])->first()->working_days ?? WorkingDay::getNormalWorkingDays($year, $i);
-                $employeeNeeded = $sum / (8 * $workingDays);
-
-                data_set($overallData, 'total.plan', data_get($overallData, 'total.plan', 0) + $budgetPlan);
-                data_set($overallData, 'total.actual', data_get($overallData, 'total.actual', 0) + $compareActualBudget);
-
-                data_set($salaryCostData, 'total', data_get($salaryCostData, 'total', 0) + $actualBudget);
-
-                $overallData[$i] = $compareActualBudget > $budgetPlan ? false : true;
-                $salaryCostData[$i] = $actualBudget;
-                $employeeData[$i] = [
-                    'is_overload' => $employeeNeeded > $numberOfEmployees,
-                    'needed' => $employeeNeeded
-                ];
-            }
-
-            $totalOverallActual = (int) data_get($overallData, 'total.actual', 0);
-            $totalOverallPlan = (int) data_get($overallData, 'total.plan', 0);
-
-            if ($totalOverallActual > $totalOverallPlan) {
-                data_set($overallData, 'total', false);
-            } else if ($totalOverallActual === 0 && $totalOverallPlan === 0) {
-                data_set($overallData, 'total', true);
-            }
-
-
-            data_set($dashboardData, "overall." . $department->id, $overallData);
-            data_set($dashboardData, "salary_cost." . $department->id, $salaryCostData);
-            data_set($dashboardData, "employee_needed." . $department->id, $employeeData);
-        }
-
-        return view('dashboard', compact('dashboardData', 'year', 'departmentOptions'));
+        return view('dashboard', compact('productPlans', 'productOptions', 'year', 'departmentOptions', 'laborCostData', 'budgetData'));
     }
+
+
 
     /**
      * Update the specified resource in storage.
@@ -89,21 +51,141 @@ class DashboardController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, int $productPlanId)
     {
-        $departmentId = $request->input('department_id');
+        $productPlanId = $request->input('product_plan_id');
         $year = $request->input('year');
         $month = $request->input('month');
 
-        $budgetPlan = BudgetPlan::where(['year' => $year, 'month' => $month, 'department_id' => $departmentId])->latest()->first();
-        if ($budgetPlan) {
-            $budgetPlan->update([
-                'amount' => VND_to_number($request->input('value'))
+        $productPlan = ProductPlan::find((int) $productPlanId);
+
+        if ($productPlan) {
+            $productPlan->update([
+                'quantity' => $request->input('value')
             ]);
         }
 
-        $budgetPlan->refresh();
+        $productPlan->refresh();
 
-        return ['success' => true];
+        $data = $this->getLaborCostData($year, $productPlan->department->id);
+
+        return $data;
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
+        $months = $request->input('months', []);
+
+        foreach ($months as $month) {
+            ProductPlan::updateOrCreate(
+                [
+                    'department_id'     => $request->input('department_id'),
+                    'product_id'        => $request->input('product_id'),
+                    'month'             => $month,
+                    'year'              => $request->input('year')
+                ],
+                [
+                    'department_id'     => $request->input('department_id'),
+                    'product_id'        => $request->input('product_id'),
+                    'month'             => $month,
+                    'year'              => $request->input('year'),
+                    'quantity'          => $request->input('quantity')
+                ]
+            );
+        }
+
+        return redirect("/")->with('success', 'saved!');
+    }
+
+    public function getBudgetData($year)
+    {
+        $budgetData = array();
+
+        $budgetData["Tổng"] = [
+            'Luỹ kế theo kế hoạch' => 0,
+            'Luỹ kế lương theo kế hoạch sản xuất' => 0,
+            'Chi phí thực tế ERP' => 0,
+            'Luỹ kế so sánh' => 0,
+            'Vượt' => 0,
+        ];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $condition = ['year' => $year, 'month' => $i];
+            $budgetData["Tháng {$i}"] = [
+                'Luỹ kế theo kế hoạch' => 0,
+                'Luỹ kế lương theo kế hoạch sản xuất' => 0,
+                'Chi phí thực tế ERP' => 0,
+                'Luỹ kế so sánh' => 0,
+                'Vượt' => false
+            ];
+
+            Department::all()->each(function ($department) use (&$budgetData, $condition, $year, $i) {
+                $budgetPlan = data_get($department->getBudgetPlan($year, $i), 'amount');
+                $totalTimeNeeded = $department->getTotalNeededTimeByPlan($condition);
+                $actualBudget = $department->getActualEmployeeCost($condition, $totalTimeNeeded);
+                $budgetByAccounting = data_get($department->budgets()->where($condition)->latest()->first(), 'amount');
+                $comparableBudget = $budgetByAccounting ? $budgetByAccounting : $actualBudget;
+
+                $budgetData["Tháng {$i}"]['Luỹ kế theo kế hoạch'] += $budgetPlan;
+                $budgetData["Tháng {$i}"]['Luỹ kế lương theo kế hoạch sản xuất'] += $actualBudget;
+                $budgetData["Tháng {$i}"]['Chi phí thực tế ERP'] += $budgetByAccounting;
+                $budgetData["Tháng {$i}"]['Luỹ kế so sánh'] += $comparableBudget;
+            });
+
+            $budgetData["Tổng"]['Luỹ kế theo kế hoạch'] += $budgetData["Tháng {$i}"]['Luỹ kế theo kế hoạch'];
+            $budgetData["Tổng"]['Luỹ kế lương theo kế hoạch sản xuất'] += $budgetData["Tháng {$i}"]['Luỹ kế lương theo kế hoạch sản xuất'];
+            $budgetData["Tổng"]['Chi phí thực tế ERP'] += $budgetData["Tháng {$i}"]['Chi phí thực tế ERP'];
+            $budgetData["Tổng"]['Luỹ kế so sánh'] += $budgetData["Tháng {$i}"]['Luỹ kế so sánh'];
+
+            data_set($budgetData, "Tháng {$i}.Vượt", data_get($budgetData, "Tháng {$i}.Luỹ kế so sánh") > data_get($budgetData, "Tháng {$i}.Luỹ kế theo kế hoạch"));
+        }
+
+        data_set($budgetData, 'Tổng.Vượt', data_get($budgetData, 'Tổng.Luỹ kế so sánh') > data_get($budgetData, 'Tổng.Luỹ kế theo kế hoạch'));
+
+        return $budgetData;
+    }
+
+    public function getLaborCostData(int $year)
+    {
+        $laborCostData = array();
+        $laborCostData['Tổng'] = [
+            'Số nhân công có' => 0,
+            'Số nhân công cần' => 0,
+            'Vượt' => false
+        ];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $laborCostData["Tháng {$i}"] = [
+                'Số nhân công có' => 0,
+                'Số nhân công cần' => 0,
+                'Vượt' => false
+            ];
+
+            $condition = ['year' => $year, 'month' => $i];
+
+            Department::all()->each(function ($department) use (&$laborCostData, $condition, $year, $i) {
+                $totalEmployees = $department->getTotalEmployees($condition);
+                $totalEmployeesNeeded = $department->getTotalNeededEmployeeByPlan($condition);
+
+                $laborCostData["Tháng {$i}"]['Số nhân công có'] += $totalEmployees;
+                $laborCostData["Tháng {$i}"]['Số nhân công cần'] += $totalEmployeesNeeded;
+            });
+
+            $laborCostData['Tổng']['Số nhân công có'] += $laborCostData["Tháng {$i}"]['Số nhân công có'];
+            $laborCostData['Tổng']['Số nhân công cần'] += $laborCostData["Tháng {$i}"]['Số nhân công cần'];
+
+            data_set($laborCostData, "Tháng {$i}.Vượt", data_get($laborCostData, "Tháng {$i}.Số nhân công cần") > data_get($laborCostData, "Tháng {$i}.Số nhân công có"));
+        }
+
+        data_set($laborCostData, 'Tổng.Vượt', data_get($laborCostData, 'Tổng.Số nhân công cần') > data_get($laborCostData, 'Tổng.Số nhân công có'));
+
+        return $laborCostData;
     }
 }

@@ -8,12 +8,12 @@
                 Trang chủ
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link {{ (request()->routeIs('employees*')) ? 'active' : '' }}" href="/employees">
                 <i class="material-icons" style="font-size: 13px">people</i>
                 Nhân viên
             </a>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#departments" aria-expanded="false"

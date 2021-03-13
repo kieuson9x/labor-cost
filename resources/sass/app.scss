@@ -69,7 +69,7 @@ body {
 .dataTables_wrapper {
     overflow-x:auto;
 }
-#table_dashboard_overall, #table_dashboard_employee_needed, #table_department, #table_department_report {
+table  {
     tr {
         td {
             &.overload {

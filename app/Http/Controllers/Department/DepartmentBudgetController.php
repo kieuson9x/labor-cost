@@ -40,8 +40,8 @@ class DepartmentBudgetController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
 
-        $budget = Budget::where(['year' => $year, 'month' => $month, 'department_id' => $departmentId])->updateOrCreate([
-            'amount' => VND_to_number($request->input('value'))
+        $budget = Budget::updateOrCreate([
+            'year' => $year, 'month' => $month, 'department_id' => $departmentId
         ], [
             'amount' => VND_to_number($request->input('value')),
             'year' => $year,

@@ -11319,26 +11319,17 @@ body {
   overflow-x: auto;
 }
 
-#table_dashboard_overall tr td.overload,
-#table_dashboard_employee_needed tr td.overload,
-#table_department tr td.overload,
-#table_department_report tr td.overload {
+table tr td.overload {
   color: white;
   background: #f32c22;
 }
 
-#table_dashboard_overall tr td.normal-green,
-#table_dashboard_employee_needed tr td.normal-green,
-#table_department tr td.normal-green,
-#table_department_report tr td.normal-green {
+table tr td.normal-green {
   color: white;
   background: #5aa469;
 }
 
-#table_dashboard_overall tr td:not(:first-child).not-editable,
-#table_dashboard_employee_needed tr td:not(:first-child).not-editable,
-#table_department tr td:not(:first-child).not-editable,
-#table_department_report tr td:not(:first-child).not-editable {
+table tr td:not(:first-child).not-editable {
   background: #bbbbbb;
 }
 
