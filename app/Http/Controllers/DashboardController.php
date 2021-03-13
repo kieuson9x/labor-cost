@@ -37,13 +37,12 @@ class DashboardController extends Controller
             });
 
         $productOptions = Product::getProductOptions();
-        $budgetData = $this->getBudgetData($year);
+        $budgetData = $this->getBudgetData($year)['budgetData'];
+        $salaryCost = $this->getBudgetData($year)['salaryCost'];
         $laborCostData = $this->getLaborCostData($year);
 
-        return view('dashboard', compact('productPlans', 'productOptions', 'year', 'departmentOptions', 'laborCostData', 'budgetData'));
+        return view('dashboard', compact('productPlans', 'productOptions', 'year', 'departmentOptions', 'laborCostData', 'budgetData', 'salaryCost'));
     }
-
-
 
     /**
      * Update the specified resource in storage.
@@ -106,8 +105,10 @@ class DashboardController extends Controller
 
     public function getBudgetData($year)
     {
+        $salaryCost = array();
         $budgetData = array();
 
+        $salaryCost["Tổng"] = [];
         $budgetData["Tổng"] = [
             'Luỹ kế theo kế hoạch' => 0,
             'Luỹ kế lương theo kế hoạch sản xuất' => 0,
@@ -118,6 +119,9 @@ class DashboardController extends Controller
 
         for ($i = 1; $i <= 12; $i++) {
             $condition = ['year' => $year, 'month' => $i];
+
+            $salaryCost["Tháng {$i}"] = [];
+
             $budgetData["Tháng {$i}"] = [
                 'Luỹ kế theo kế hoạch' => 0,
                 'Luỹ kế lương theo kế hoạch sản xuất' => 0,
@@ -126,17 +130,21 @@ class DashboardController extends Controller
                 'Vượt' => false
             ];
 
-            Department::all()->each(function ($department) use (&$budgetData, $condition, $year, $i) {
+            Department::all()->each(function ($department) use (&$budgetData, &$salaryCost, $condition, $year, $i) {
                 $budgetPlan = data_get($department->getBudgetPlan($year, $i), 'amount');
                 $totalTimeNeeded = $department->getTotalNeededTimeByPlan($condition);
                 $actualBudget = $department->getActualEmployeeCost($condition, $totalTimeNeeded);
                 $budgetByAccounting = data_get($department->budgets()->where($condition)->latest()->first(), 'amount');
-                $comparableBudget = $budgetByAccounting ? $budgetByAccounting : $actualBudget;
+                $comparableBudget = ((int) $budgetByAccounting !== 0) ? $budgetByAccounting : $actualBudget;
 
                 $budgetData["Tháng {$i}"]['Luỹ kế theo kế hoạch'] += $budgetPlan;
                 $budgetData["Tháng {$i}"]['Luỹ kế lương theo kế hoạch sản xuất'] += $actualBudget;
                 $budgetData["Tháng {$i}"]['Chi phí thực tế ERP'] += $budgetByAccounting;
                 $budgetData["Tháng {$i}"]['Luỹ kế so sánh'] += $comparableBudget;
+
+                $salaryCost["Tháng {$i}"][$department->id] = $actualBudget;
+                if (!isset($salaryCost["Tổng"][$department->id])) data_set($salaryCost, "Tổng.{$department->id}", 0);
+                $salaryCost["Tổng"][$department->id] += $actualBudget;
             });
 
             $budgetData["Tổng"]['Luỹ kế theo kế hoạch'] += $budgetData["Tháng {$i}"]['Luỹ kế theo kế hoạch'];
@@ -149,7 +157,10 @@ class DashboardController extends Controller
 
         data_set($budgetData, 'Tổng.Vượt', data_get($budgetData, 'Tổng.Luỹ kế so sánh') > data_get($budgetData, 'Tổng.Luỹ kế theo kế hoạch'));
 
-        return $budgetData;
+        return [
+            'budgetData' => $budgetData,
+            'salaryCost' => $salaryCost
+        ];
     }
 
     public function getLaborCostData(int $year)
@@ -187,5 +198,10 @@ class DashboardController extends Controller
         data_set($laborCostData, 'Tổng.Vượt', data_get($laborCostData, 'Tổng.Số nhân công cần') > data_get($laborCostData, 'Tổng.Số nhân công có'));
 
         return $laborCostData;
+    }
+
+    public function getSalaryCost(int $year)
+    {
+        $salaryCostData = array();
     }
 }

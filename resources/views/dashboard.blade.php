@@ -166,6 +166,50 @@
             <div class="col-md-12 grid-margin">
                 <div class="card">
                     <div class="p-4 border-bottom bg-light">
+                        <h4 class="card-title mb-0">Bảng chi phí các bộ phận</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table" data-toggle="table" id="table_department_report_salary_cost">
+                            <thead>
+                                <tr class="tableizer-firstrow">
+                                    <th>Nội dung</th>
+                                    <th>Lũy kế cả năm</th>
+                                    <th>Tháng 1</th>
+                                    <th>Tháng 2</th>
+                                    <th>Tháng 3</th>
+                                    <th>Tháng 4</th>
+                                    <th>Tháng 5</th>
+                                    <th>Tháng 6</th>
+                                    <th>Tháng 7</th>
+                                    <th>Tháng 8</th>
+                                    <th>Tháng 9</th>
+                                    <th>Tháng 10</th>
+                                    <th>Tháng 11</th>
+                                    <th>Tháng 12</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($departmentOptions as $department)
+                                    <tr>
+                                        <td>{{str_replace('HY_', '', $department['title'])}}</td>
+                                        <td data-halign="center">
+                                            {{number_to_VND(data_get($salaryCost, "Tổng.{$department['value']}")) }}
+                                        </td>
+                                        @for ($i = 1; $i <= 12; $i++) <td data-halign="center" id="{{$department['value']}}">
+                                                {{number_to_VND(data_get($salaryCost, "Tháng {$i}.{$department['value']}"))}}
+                                            </td>
+                                            @endfor
+                                    </tr>
+                                @endforeach
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 grid-margin">
+                <div class="card">
+                    <div class="p-4 border-bottom bg-light">
                         <h4 class="card-title mb-0">Bảng đánh giá nhân công</h4>
                     </div>
                     <div class="card-body">
@@ -310,7 +354,7 @@
             ordering: false,
         });
 
-        $('#table_department_report_cost, #table_department_report_employee').DataTable({
+        $('#table_department_report_cost, #table_department_report_employee, #table_department_report_salary_cost').DataTable({
             responsive: true,
             paging: false,
             ordering: false,
